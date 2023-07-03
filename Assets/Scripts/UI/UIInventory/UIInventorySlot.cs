@@ -68,7 +68,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
     private void SceneLoaded()
     {
         //这句话之前是放在start方法中的，但是因为我们开始的时候要等待场景加载完再来寻找，所以改写成事件的形式
-        parentItem = GameObject.FindGameObjectWithTag(Tags.ItemsParentTransform).transform; //找到场景中所有可拾取物体的父物体
+        parentItem = GameObject.FindGameObjectWithTag(Tags.ItemParentTransform).transform; //找到场景中所有可拾取物体的父物体
     }
 
 

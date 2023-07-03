@@ -285,6 +285,8 @@ public class Player : SingletonMonobehaviour<Player>
 
         GridPropertiesManager.Instance.SetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY,
             gridPropertyDetails);
+        
+        GridPropertiesManager.Instance.DisplayDugGround(gridPropertyDetails);
 
         yield return afterUseToolAnimationPause;
 

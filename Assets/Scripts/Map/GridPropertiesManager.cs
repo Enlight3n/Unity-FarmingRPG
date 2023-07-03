@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 /// <summary>
 /// 整体来说，这个类的作用就是，将数据容器中保存的GridProperty细化为GridPropertyDetails，然后按场景装载到GameObjectSave中，
@@ -10,9 +11,12 @@ using UnityEngine;
 public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManager>,ISaveable
 {
     
-    public Grid grid; //暂时未用
+    private Grid grid; //暂时未用
+    private Tilemap groundDecoration1; //锄地的地面
+    private Tilemap groundDecoration2; //锄地+浇水的地面
+    [SerializeField] private Tile[] dugGround = null;
     
-    //保存玩家当前在的场景的特殊贴图
+    //保存玩家当前所在场景的特殊贴图
     private Dictionary<string, GridPropertyDetails> gridPropertyDictionary;
     
     //获取场景中全部的数据容器
@@ -51,6 +55,9 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     private void AfterSceneLoaded()
     {
         grid = GameObject.FindObjectOfType<Grid>();
+        
+        groundDecoration1 = GameObject.FindGameObjectWithTag(Tags.GroundDecoration1).GetComponent<Tilemap>();
+        groundDecoration2 = GameObject.FindGameObjectWithTag(Tags.GroundDecoration2).GetComponent<Tilemap>();
     }
 
     #region ISaveable接口
@@ -69,14 +76,13 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     //先删除掉保存的当前场景中的特殊贴图数据，再将当前场景的信息写入
     public void ISaveableStoreScene(string sceneName)
     {
-        //
         GameObjectSave.sceneData.Remove(sceneName);
 
         SceneSave sceneSave = new SceneSave();
 
         sceneSave.gridPropertyDetailsDictionary = gridPropertyDictionary;
-        
-        GameObjectSave.sceneData.Add(sceneName,sceneSave);
+
+        GameObjectSave.sceneData.Add(sceneName, sceneSave);
     }
 
     
@@ -88,6 +94,15 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
             if (sceneSave.gridPropertyDetailsDictionary != null);
             {
                 gridPropertyDictionary = sceneSave.gridPropertyDetailsDictionary;
+            }
+            
+            //遍历这个gridPropertyDictionary，根据其性质，逐一修改单个瓦片
+            if (gridPropertyDictionary.Count > 0)
+            {
+                ClearDisplayGridPropertyDetails();
+
+                // 实例化当前场景的网格属性细节
+                DisplayGridPropertyDetails();
             }
         }
     }
@@ -168,6 +183,198 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         }
     }
 
+    
+    
+    
+    #region 修改锄地后的单个瓦片贴图
+    public void DisplayDugGround(GridPropertyDetails gridPropertyDetails)
+    {
+        //如果>-1，说明这块地被锄过，则应该显示
+        if (gridPropertyDetails.daysSinceDug > -1)
+        {
+            ConnectDugGround(gridPropertyDetails);
+        }
+    }
+    
+    
+    private void ConnectDugGround(GridPropertyDetails gridPropertyDetails)
+    {
+        //根据周围的瓦片是否被挖掘来寻找合适的瓦片
+        Tile dugTile0 = SetDugTile(gridPropertyDetails.gridX, gridPropertyDetails.gridY);
+        
+        //设置合适的瓦片
+        groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY, 0), 
+            dugTile0);
+
+        
+        
+        //接下来处理周围四个网格的贴图
+        GridPropertyDetails adjacentGridPropertyDetails;
+
+        adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY + 1);
+        if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceDug > -1)
+        {
+            Tile dugTile1 = SetDugTile(gridPropertyDetails.gridX, gridPropertyDetails.gridY + 1);
+            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY + 1, 0), dugTile1);
+        }
+
+        adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY - 1);
+        if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceDug > -1)
+        {
+            Tile dugTile2 = SetDugTile(gridPropertyDetails.gridX, gridPropertyDetails.gridY - 1);
+            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY - 1, 0), dugTile2);
+        }
+        adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX - 1, gridPropertyDetails.gridY);
+        if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceDug > -1)
+        {
+            Tile dugTile3 = SetDugTile(gridPropertyDetails.gridX - 1, gridPropertyDetails.gridY);
+            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX - 1, gridPropertyDetails.gridY, 0), dugTile3);
+        }
+
+        adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX + 1, gridPropertyDetails.gridY);
+        if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceDug > -1)
+        {
+            Tile dugTile4 = SetDugTile(gridPropertyDetails.gridX + 1, gridPropertyDetails.gridY);
+            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX + 1, gridPropertyDetails.gridY, 0), dugTile4);
+        }
+    }
+    
+    
+    //传入xy坐标，根据周围格子的性质，传出当前锄的格子的恰当贴图
+    private Tile SetDugTile(int xGrid, int yGrid)
+    {
+        
+        //确认这个格子周围的格子是否被锄过
+        bool upDug = IsGridSquareDug(xGrid, yGrid + 1);
+        bool downDug = IsGridSquareDug(xGrid, yGrid - 1);
+        bool leftDug = IsGridSquareDug(xGrid - 1, yGrid);
+        bool rightDug = IsGridSquareDug(xGrid + 1, yGrid);
+
+        #region 根据周围格子是否被锄过来设置合适的瓦片贴图
+
+        if (!upDug && !downDug && !rightDug && !leftDug)
+        {
+            return dugGround[0];
+        }
+        else if (!upDug && downDug && rightDug && !leftDug)
+        {
+            return dugGround[1];
+        }
+        else if (!upDug && downDug && rightDug && leftDug)
+        {
+            return dugGround[2];
+        }
+        else if (!upDug && downDug && !rightDug && leftDug)
+        {
+            return dugGround[3];
+        }
+        else if (!upDug && downDug && !rightDug && !leftDug)
+        {
+            return dugGround[4];
+        }
+        else if (upDug && downDug && rightDug && !leftDug)
+        {
+            return dugGround[5];
+        }
+        else if (upDug && downDug && rightDug && leftDug)
+        {
+            return dugGround[6];
+        }
+        else if (upDug && downDug && !rightDug && leftDug)
+        {
+            return dugGround[7];
+        }
+        else if (upDug && downDug && !rightDug && !leftDug)
+        {
+            return dugGround[8];
+        }
+        else if (upDug && !downDug && rightDug && !leftDug)
+        {
+            return dugGround[9];
+        }
+        else if (upDug && !downDug && rightDug && leftDug)
+        {
+            return dugGround[10];
+        }
+        else if (upDug && !downDug && !rightDug && leftDug)
+        {
+            return dugGround[11];
+        }
+        else if (upDug && !downDug && !rightDug && !leftDug)
+        {
+            return dugGround[12];
+        }
+        else if (!upDug && !downDug && rightDug && !leftDug)
+        {
+            return dugGround[13];
+        }
+        else if (!upDug && !downDug && rightDug && leftDug)
+        {
+            return dugGround[14];
+        }
+        else if (!upDug && !downDug && !rightDug && leftDug)
+        {
+            return dugGround[15];
+        }
+
+        return null;
+
+        #endregion 
+    }
+    
+    //确认是否坐标为xy的格子被锄过
+    private bool IsGridSquareDug(int xGrid, int yGrid)
+    {
+        GridPropertyDetails gridPropertyDetails = GetGridPropertyDetails(xGrid, yGrid);
+
+        if (gridPropertyDetails == null)
+        {
+            return false;
+        }
+        else if (gridPropertyDetails.daysSinceDug > -1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    #endregion
+
+    
+    
+    
+    
+    #region 重绘当前贴图
+
+    private void ClearDisplayGroundDecorations()
+    {
+        groundDecoration1.ClearAllTiles();
+        groundDecoration2.ClearAllTiles();
+    }
+    private void ClearDisplayGridPropertyDetails()
+    {
+        ClearDisplayGroundDecorations(); //暂时只有这一个方法，等庄稼长出来以后还会有另一个方法
+    }
+    private void DisplayGridPropertyDetails()
+    {
+        foreach (KeyValuePair<string, GridPropertyDetails> item in gridPropertyDictionary)
+        {
+            GridPropertyDetails gridPropertyDetails = item.Value;
+
+            DisplayDugGround(gridPropertyDetails);
+        }
+    }
+    
+    #endregion
+    
+    
+    
+    
+    
+    #region 设置和获取的网格详细性质
+    
     public void SetGridPropertyDetails(int gridX, int gridY, GridPropertyDetails gridPropertyDetails)
     {
         SetGridPropertyDetails(gridX,gridY,gridPropertyDetails,gridPropertyDictionary);
@@ -211,4 +418,5 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         }
     }
     
+    #endregion
 }
