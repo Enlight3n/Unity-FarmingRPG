@@ -173,6 +173,10 @@ public class GridCursor : MonoBehaviour
                        return;
                    } 
                    break;
+               case ItemType.Chopping_tool:
+               case ItemType.Collecting_tool:
+               case ItemType.Breaking_tool: 
+               case ItemType.Reaping_tool:
                case ItemType.Watering_tool:
                case ItemType.Hoeing_tool:
                    if (!IsCursorValidForTool(gridPropertyDetails, itemDetails))
@@ -238,6 +242,7 @@ public class GridCursor : MonoBehaviour
 
                     List<Item> itemList = new List<Item>();
 
+                    //这里应该是为了判断能不能种，有树的话不能种
                     HelperMethods.GetComponentsAtBoxLocation<Item>(out itemList, cursorWorldPosition,
                         Settings.cursorSize, 0f);
 
@@ -246,7 +251,7 @@ public class GridCursor : MonoBehaviour
                     foreach (Item item in itemList)
                     {
                         if (InventoryManager.Instance.GetItemDetails(item.ItemCode).itemType ==
-                            ItemType.Reapable_scenery)
+                            ItemType.Reapable_scenary)
                         {
                             foundReapable = true;
                             break;

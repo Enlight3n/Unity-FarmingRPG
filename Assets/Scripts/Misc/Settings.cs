@@ -7,6 +7,8 @@ public static class Settings
     public const float fadeOutSeconds = 0.35f;
     public const float targetAlpha = 0.45f;
     
+    public static float playerCentreYOffset = 0.875f;
+    
     //玩家移动相关的常量
     public const float runningSpeed = 5.333f;
     public const float walkingSpeed = 2.666f * 10f;

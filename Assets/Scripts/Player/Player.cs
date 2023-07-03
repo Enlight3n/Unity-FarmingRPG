@@ -561,11 +561,18 @@ public class Player : SingletonMonobehaviour<Player>
         {
             SceneControllerManager.Instance.FadeAndLoadScene(SceneName.Scene1_Farm.ToString(),transform.position);
         }
-}
+    }
     
     public Vector3 GetPlayerViewportPosition()
     {
         //Camera.main.WorldToScreenPoint()函数接收一个世界空间下的位置，返回其所在的屏幕空间位置，以及其相对于摄像机的深度信息
         return mainCamera.WorldToViewportPoint(transform.position);
+    }
+
+    //返回玩家的中心位置，因为玩家的轴心在脚底
+    public Vector3 GetPlayerCentrePosition()
+    {
+        Vector3 tempP = transform.position;
+        return new Vector3(tempP.x, tempP.y + Settings.playerCentreYOffset, tempP.z);
     }
 }

@@ -40,6 +40,8 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
     public Image inventorySlotHighlight; //框选中的图片
     [HideInInspector] public bool isSelected = false; //用于表面是否被选中
 
+    private Cursor cursor;
+    
     private void Awake()
     {
         parentCanvas = GetComponentInParent<Canvas>();
@@ -50,6 +52,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
     {
         mainCamera = Camera.main; //Camera.main返回当前激活的相机
         gridCursor = FindObjectOfType<GridCursor>();
+        cursor = FindObjectOfType<Cursor>();
     }
 
     
@@ -298,6 +301,9 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
         inventoryBar.SetHighlightedInventorySlots();
 
         gridCursor.ItemUseGridRadius = itemDetails.itemUseGridRadius;
+        
+        cursor.ItemUseRadius = itemDetails.itemUseRadius;
+        
         if (itemDetails.itemUseGridRadius > 0)
         {
             gridCursor.EnableCursor();
@@ -306,6 +312,19 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
         {
             gridCursor.DisableCursor();
         }
+
+        if (itemDetails.itemUseRadius > 0f)
+        {
+            cursor.EnableCursor();
+        }
+        else
+        {
+            cursor.DisableCursor();
+        }
+
+        gridCursor.SelectedItemType = itemDetails.itemType;
+        
+        cursor.SelectedItemType = itemDetails.itemType;
         
         InventoryManager.Instance.SetSelectedInventoryItem(InventoryLocation.player, itemDetails.itemCode);
 
@@ -335,8 +354,12 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
     private void ClearCursors()
     {
         gridCursor.DisableCursor();
+        
+        cursor.DisableCursor();
 
         gridCursor.SelectedItemType = ItemType.none;
+        
+        cursor.SelectedItemType = ItemType.none;
     }
     #endregion
 }

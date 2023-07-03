@@ -38,7 +38,7 @@ public class Item : MonoBehaviour
             _spriteRenderer.sprite = itemDetails.itemSprite;
 
             //如果是可收割类型的物体，则可以摆动，像草，仙人掌这一类的
-            if (itemDetails.itemType == ItemType.Reapable_scenery)
+            if (itemDetails.itemType == ItemType.Reapable_scenary)
             {
                 gameObject.AddComponent<ItemNudge>();
             }
