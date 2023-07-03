@@ -490,7 +490,4 @@ public class Player : SingletonMonobehaviour<Player>
         //Camera.main.WorldToScreenPoint()函数接收一个世界空间下的位置，返回其所在的屏幕空间位置，以及其相对于摄像机的深度信息
         return mainCamera.WorldToViewportPoint(transform.position);
     }
-    
-
-
 }
