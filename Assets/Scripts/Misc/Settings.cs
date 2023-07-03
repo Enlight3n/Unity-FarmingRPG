@@ -1,3 +1,4 @@
+using UnityEditor.Networking.PlayerConnection;
 using UnityEngine;
 
 public static class Settings
@@ -24,7 +25,10 @@ public static class Settings
     public static int playerInitialInventoryCapacity = 24;
     public static int playerMaximumInventoryCapacity = 48;
 
-
+    //收割相关
+    public const int maxCollidersToTestPerReapSwing = 15;
+    public const int maxTargetComponentsToDestroyPerReapSwing = 2; //每次收割最多收获几个物品
+    
     //Player Animation Parameters
     public static int xInput;
     public static int yInput;
