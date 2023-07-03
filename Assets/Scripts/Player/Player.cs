@@ -1,4 +1,4 @@
-using System;
+
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
@@ -256,55 +256,7 @@ public class Player : SingletonMonobehaviour<Player>
         }
     }
 
-    private void WaterGroundAtCursor(GridPropertyDetails gridPropertyDetails, Vector3Int playerDirection)
-    {
-        // Trigger animation
-        StartCoroutine(WaterGroundAtCursorRoutine(playerDirection, gridPropertyDetails));
-    }
-
-    private IEnumerator WaterGroundAtCursorRoutine(Vector3Int playerDirection, GridPropertyDetails gridPropertyDetails)
-    {
-        PlayerInputIsDisabled = true;
-        playerToolUseDisabled = true;
-        
-        toolCharacterAttribute.partVariantType = PartVariantType.wateringCan;
-        characterAttributeCustomisationList.Clear();
-        characterAttributeCustomisationList.Add(toolCharacterAttribute);
-        animationOverrides.ApplyCharacterCustomisationParameters(characterAttributeCustomisationList);
-
-        // TODO: 这里要确保水壶里有水
-        toolEffect = ToolEffect.watering;
-
-        if (playerDirection == Vector3Int.right)
-        {
-            isLiftingToolRight = true;
-        }
-        else if (playerDirection == Vector3Int.left)
-        {
-            isLiftingToolLeft = true;
-        }
-        else if (playerDirection == Vector3Int.up)
-        {
-            isLiftingToolUp = true;
-        }
-        else if (playerDirection == Vector3Int.down)
-        {
-            isLiftingToolDown = true;
-        }
-
-        yield return liftToolAnimationPause;
-
-        // Set Grid property details for watered ground
-        if (gridPropertyDetails.daysSinceWatered == -1)
-        {
-            gridPropertyDetails.daysSinceWatered = 0;
-        }
-        
-        yield return afterLiftToolAnimationPause;
-
-        PlayerInputIsDisabled = false;
-        playerToolUseDisabled = false;
-    }
+   
 
     private void HoeGroundAtCursor(GridPropertyDetails gridPropertyDetails, Vector3Int playerDirection)
     {
@@ -355,6 +307,68 @@ public class Player : SingletonMonobehaviour<Player>
         PlayerInputIsDisabled = false;
         playerToolUseDisabled = false;
     }
+    
+    private void WaterGroundAtCursor(GridPropertyDetails gridPropertyDetails, Vector3Int playerDirection)
+    {
+        // Trigger animation
+        StartCoroutine(WaterGroundAtCursorRoutine(playerDirection, gridPropertyDetails));
+    }
+
+    private IEnumerator WaterGroundAtCursorRoutine(Vector3Int playerDirection, GridPropertyDetails gridPropertyDetails)
+    {
+        PlayerInputIsDisabled = true;
+        playerToolUseDisabled = true;
+        
+        toolCharacterAttribute.partVariantType = PartVariantType.wateringCan;
+        characterAttributeCustomisationList.Clear();
+        characterAttributeCustomisationList.Add(toolCharacterAttribute);
+        animationOverrides.ApplyCharacterCustomisationParameters(characterAttributeCustomisationList);
+
+        // TODO: 这里要确保水壶里有水
+        toolEffect = ToolEffect.watering;
+
+        if (playerDirection == Vector3Int.right)
+        {
+            isLiftingToolRight = true;
+        }
+        else if (playerDirection == Vector3Int.left)
+        {
+            isLiftingToolLeft = true;
+        }
+        else if (playerDirection == Vector3Int.up)
+        {
+            isLiftingToolUp = true;
+        }
+        else if (playerDirection == Vector3Int.down)
+        {
+            isLiftingToolDown = true;
+        }
+
+        yield return liftToolAnimationPause;
+
+        // 设置为已经浇过水
+        if (gridPropertyDetails.daysSinceWatered == -1)
+        {
+            gridPropertyDetails.daysSinceWatered = 0;
+        }
+
+        /*
+         突然发现，即使禁用下面的SetGridPropertyDetails方法，程序同样正常运行，
+         本来以为会出现，场景切换后未能正常保存浇水网格的GridPropertyDetails的情况
+         究其原因，应该是这个gridPropertyDetails是引用类型，在赋值的之后虽然经过反复传递，但还是会直接改变原来字典中的值
+         因此，下面或许这个方法没有执行的必要
+         */
+        GridPropertiesManager.Instance.SetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY,
+            gridPropertyDetails);
+
+        GridPropertiesManager.Instance.DisplayWateredGround(gridPropertyDetails);
+        
+        yield return afterLiftToolAnimationPause;
+
+        PlayerInputIsDisabled = false;
+        playerToolUseDisabled = false;
+    }
+    
     #endregion
 
     

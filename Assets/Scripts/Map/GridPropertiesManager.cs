@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Linq;
+using Unity.VisualScripting;
 
 /// <summary>
 /// 整体来说，这个类的作用就是，将数据容器中保存的GridProperty细化为GridPropertyDetails，然后按场景装载到GameObjectSave中，
@@ -14,7 +16,8 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     private Grid grid; //暂时未用
     private Tilemap groundDecoration1; //锄地的地面
     private Tilemap groundDecoration2; //锄地+浇水的地面
-    [SerializeField] private Tile[] dugGround = null;
+    [SerializeField] private Tile[] dugGround = null; //保存锄地贴图
+    [SerializeField] private Tile[] wateredGround = null; //保存浇水贴图
     
     //保存玩家当前所在场景的特殊贴图
     private Dictionary<string, GridPropertyDetails> gridPropertyDictionary;
@@ -29,9 +32,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     
     private GameObjectSave _gameObjectSave;
     public GameObjectSave GameObjectSave { get { return _gameObjectSave; } set { _gameObjectSave = value; } }
-
     
-
     
     protected override void Awake()
     {
@@ -44,13 +45,16 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     {
         ISaveableRegister();
         EventHandler.AfterSceneLoadEvent += AfterSceneLoaded;
+        EventHandler.AdvanceGameDayEvent += AdvanceDay;
     }
     
     private void OnDisable()
     {
         ISaveableDeregister();
         EventHandler.AfterSceneLoadEvent -= AfterSceneLoaded;
+        EventHandler.AdvanceGameDayEvent -= AdvanceDay;
     }
+
 
     private void AfterSceneLoaded()
     {
@@ -58,6 +62,46 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         
         groundDecoration1 = GameObject.FindGameObjectWithTag(Tags.GroundDecoration1).GetComponent<Tilemap>();
         groundDecoration2 = GameObject.FindGameObjectWithTag(Tags.GroundDecoration2).GetComponent<Tilemap>();
+    }
+    private void AdvanceDay(int gameYear, Season gameSeason, int gameDay, string gameDayOfWeek, int gameHour, int gameMinute, int gameSecond)
+    {
+        // 所有呈现的网格详细属性
+        ClearDisplayGridPropertyDetails();
+
+        // Loop through all scenes - by looping through all gridproperties in the array
+        foreach (SO_GridProperties so_GridProperties in so_gridPropertiesArray)
+        {
+            // Get gridpropertydetails dictionary for scene
+            //获取
+            if (GameObjectSave.sceneData.TryGetValue(so_GridProperties.sceneName.ToString(), out SceneSave sceneSave))
+            {
+                if (sceneSave.gridPropertyDetailsDictionary != null)
+                {
+                    for (int i = sceneSave.gridPropertyDetailsDictionary.Count - 1; i >= 0; i--)
+                    {
+                        KeyValuePair<string, GridPropertyDetails> item = sceneSave.gridPropertyDetailsDictionary.ElementAt(i);
+
+                        GridPropertyDetails gridPropertyDetails = item.Value;
+
+                        #region Update all grid properties to reflect the advance in the day
+
+                        // If ground is watered, then clear water
+                        if (gridPropertyDetails.daysSinceWatered > -1)
+                        {
+                            gridPropertyDetails.daysSinceWatered = -1;
+                        }
+
+                        // Set gridpropertydetails
+                        SetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY, gridPropertyDetails, sceneSave.gridPropertyDetailsDictionary);
+
+                        #endregion Update all grid properties to reflect the advance in the day
+                    }
+                }
+            }
+        }
+    
+        // Display grid property details to reflect changed values
+        DisplayGridPropertyDetails();
     }
 
     #region ISaveable接口
@@ -128,6 +172,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     {
         foreach (SO_GridProperties so_GridProperties in so_gridPropertiesArray)
         {
+            //每个场景都声明一个gridPropertyDictionary
             Dictionary<string, GridPropertyDetails> gridPropertyDictionary =
                 new Dictionary<string, GridPropertyDetails>();
 
@@ -136,7 +181,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
             {
                 GridPropertyDetails gridPropertyDetails;
 
-                //从传入的gridPropertyDictionary中，找到对应xy坐标的特殊贴图的详细信息
+                //从传入的gridPropertyDictionary中，找到对应xy坐标的特殊贴图的详细信息，按理来说是空的，但还是看看有没有
                 gridPropertyDetails = GetGridPropertyDetails(gridProperty.gridCoordinate.x,
                     gridProperty.gridCoordinate.y, gridPropertyDictionary);
 
@@ -194,6 +239,15 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         }
     }
     
+    public void DisplayWateredGround(GridPropertyDetails gridPropertyDetails)
+    {
+        // Watered
+        if (gridPropertyDetails.daysSinceWatered > -1)
+        {
+            ConnectWateredGround(gridPropertyDetails);
+        }
+    }
+
     
     private void ConnectDugGround(GridPropertyDetails gridPropertyDetails)
     {
@@ -237,6 +291,45 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         }
     }
     
+    private void ConnectWateredGround(GridPropertyDetails gridPropertyDetails)
+    {
+        // Select tile based on surrounding watered tiles
+
+        Tile wateredTile0 = SetWateredTile(gridPropertyDetails.gridX, gridPropertyDetails.gridY);
+        groundDecoration2.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY, 0), wateredTile0);
+
+        // Set 4 tiles if watered surrounding current tile - up, down, left, right now that this central tile has been watered
+
+        GridPropertyDetails adjacentGridPropertyDetails;
+
+        adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY + 1);
+        if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceWatered > -1)
+        {
+            Tile wateredTile1 = SetWateredTile(gridPropertyDetails.gridX, gridPropertyDetails.gridY + 1);
+            groundDecoration2.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY + 1, 0), wateredTile1);
+        }
+
+        adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY - 1);
+        if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceWatered > -1)
+        {
+            Tile wateredTile2 = SetWateredTile(gridPropertyDetails.gridX, gridPropertyDetails.gridY - 1);
+            groundDecoration2.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY - 1, 0), wateredTile2);
+        }
+
+        adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX - 1, gridPropertyDetails.gridY);
+        if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceWatered > -1)
+        {
+            Tile wateredTile3 = SetWateredTile(gridPropertyDetails.gridX - 1, gridPropertyDetails.gridY);
+            groundDecoration2.SetTile(new Vector3Int(gridPropertyDetails.gridX - 1, gridPropertyDetails.gridY, 0), wateredTile3);
+        }
+
+        adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX + 1, gridPropertyDetails.gridY);
+        if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceWatered > -1)
+        {
+            Tile wateredTile4 = SetWateredTile(gridPropertyDetails.gridX + 1, gridPropertyDetails.gridY);
+            groundDecoration2.SetTile(new Vector3Int(gridPropertyDetails.gridX + 1, gridPropertyDetails.gridY, 0), wateredTile4);
+        }
+    }
     
     //传入xy坐标，根据周围格子的性质，传出当前锄的格子的恰当贴图
     private Tile SetDugTile(int xGrid, int yGrid)
@@ -320,6 +413,89 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         #endregion 
     }
     
+    private Tile SetWateredTile(int xGrid, int yGrid)
+    {
+        // Get whether surrounding tiles (up,down,left, and right) are watered or not
+
+        bool upWatered = IsGridSquareWatered(xGrid, yGrid + 1);
+        bool downWatered = IsGridSquareWatered(xGrid, yGrid - 1);
+        bool leftWatered = IsGridSquareWatered(xGrid - 1, yGrid);
+        bool rightWatered = IsGridSquareWatered(xGrid + 1, yGrid);
+
+        #region Set appropriate tile based on whether surrounding tiles are watered or not
+
+        if (!upWatered && !downWatered && !rightWatered && !leftWatered)
+        {
+            return wateredGround[0];
+        }
+        else if (!upWatered && downWatered && rightWatered && !leftWatered)
+        {
+            return wateredGround[1];
+        }
+        else if (!upWatered && downWatered && rightWatered && leftWatered)
+        {
+            return wateredGround[2];
+        }
+        else if (!upWatered && downWatered && !rightWatered && leftWatered)
+        {
+            return wateredGround[3];
+        }
+        else if (!upWatered && downWatered && !rightWatered && !leftWatered)
+        {
+            return wateredGround[4];
+        }
+        else if (upWatered && downWatered && rightWatered && !leftWatered)
+        {
+            return wateredGround[5];
+        }
+        else if (upWatered && downWatered && rightWatered && leftWatered)
+        {
+            return wateredGround[6];
+        }
+        else if (upWatered && downWatered && !rightWatered && leftWatered)
+        {
+            return wateredGround[7];
+        }
+        else if (upWatered && downWatered && !rightWatered && !leftWatered)
+        {
+            return wateredGround[8];
+        }
+        else if (upWatered && !downWatered && rightWatered && !leftWatered)
+        {
+            return wateredGround[9];
+        }
+        else if (upWatered && !downWatered && rightWatered && leftWatered)
+        {
+            return wateredGround[10];
+        }
+        else if (upWatered && !downWatered && !rightWatered && leftWatered)
+        {
+            return wateredGround[11];
+        }
+        else if (upWatered && !downWatered && !rightWatered && !leftWatered)
+        {
+            return wateredGround[12];
+        }
+        else if (!upWatered && !downWatered && rightWatered && !leftWatered)
+        {
+            return wateredGround[13];
+        }
+        else if (!upWatered && !downWatered && rightWatered && leftWatered)
+        {
+            return wateredGround[14];
+        }
+        else if (!upWatered && !downWatered && !rightWatered && leftWatered)
+        {
+            return wateredGround[15];
+        }
+
+        return null;
+
+        #endregion Set appropriate tile based on whether surrounding tiles are watered or not
+    }
+
+    
+    
     //确认是否坐标为xy的格子被锄过
     private bool IsGridSquareDug(int xGrid, int yGrid)
     {
@@ -338,6 +514,25 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
             return false;
         }
     }
+    
+    private bool IsGridSquareWatered(int xGrid, int yGrid)
+    {
+        GridPropertyDetails gridPropertyDetails = GetGridPropertyDetails(xGrid, yGrid);
+
+        if (gridPropertyDetails == null)
+        {
+            return false;
+        }
+        else if (gridPropertyDetails.daysSinceWatered > -1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
     #endregion
 
     
@@ -346,6 +541,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     
     #region 重绘当前贴图
 
+    //清除所有的锄地和浇水贴图
     private void ClearDisplayGroundDecorations()
     {
         groundDecoration1.ClearAllTiles();
@@ -362,6 +558,8 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
             GridPropertyDetails gridPropertyDetails = item.Value;
 
             DisplayDugGround(gridPropertyDetails);
+            
+            DisplayWateredGround(gridPropertyDetails);
         }
     }
     
@@ -375,7 +573,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     
     public void SetGridPropertyDetails(int gridX, int gridY, GridPropertyDetails gridPropertyDetails)
     {
-        SetGridPropertyDetails(gridX,gridY,gridPropertyDetails,gridPropertyDictionary);
+        SetGridPropertyDetails(gridX, gridY, gridPropertyDetails, gridPropertyDictionary);
     }
     
     
