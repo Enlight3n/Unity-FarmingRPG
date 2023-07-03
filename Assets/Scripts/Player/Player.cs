@@ -148,15 +148,19 @@ public class Player : SingletonMonobehaviour<Player>
     private void ProcessPlayerClickInput(Vector3Int cursorGridPosition, Vector3Int playerGridPosition)
     {
         ResetMovement(); //玩家放置东西时会停一下
-
+        
+        //传入玩家的光标网格位置和玩家网格位置的相对关系，获得动作动画的释放方位
         Vector3Int playerDirection = GetPlayerClickDirection(cursorGridPosition, playerGridPosition);
 
+        //获取光标网格位置的详细信息
         GridPropertyDetails gridPropertyDetails =
             GridPropertiesManager.Instance.GetGridPropertyDetails(cursorGridPosition.x, cursorGridPosition.y);
 
+        //获取当前选择的物体的详细信息
         ItemDetails itemDetails = InventoryManager.Instance.GetSelectedInventoryItemDetails(InventoryLocation.player);
         if (itemDetails != null)
         {
+            //看当前选择的物品的类型，对不同的类型实现不同的方法（考虑是否可被释放，光标是否有效）
             switch (itemDetails.itemType)
             {
                 case ItemType.Seed:
@@ -183,7 +187,47 @@ public class Player : SingletonMonobehaviour<Player>
             }
         }
     }
+    
+    //传入玩家的光标网格位置和玩家网格位置的相对关系，获得动作动画的释放方位
+    private Vector3Int GetPlayerClickDirection(Vector3Int cursorGridPosition, Vector3Int playerGridPosition)
+    {
+        if (cursorGridPosition.x > playerGridPosition.x)
+        {
+            return Vector3Int.right;
+        }
+        else if(cursorGridPosition.x < playerGridPosition.x)
+        {
+            return Vector3Int.left;
+        }
+        else if(cursorGridPosition.y > playerGridPosition.y)
+        {
+            return Vector3Int.up;
+        }
+        else
+        {
+            return Vector3Int.down;
+        }
+    }
+    #endregion
 
+    #region 处理不同类型物品放置效果的方法
+    
+    private void ProcessPlayerClickInputSeed(ItemDetails itemDetails)
+    {
+        if (itemDetails.canBeDropped && gridCursor.CursorPositionIsValid)
+        {
+            EventHandler.CallDropSelectedItemEvent();
+        }
+    }
+
+    private void ProcessPlayerClickInputCommodity(ItemDetails itemDetails)
+    {
+        if (itemDetails.canBeDropped && gridCursor.CursorPositionIsValid)
+        {
+            EventHandler.CallDropSelectedItemEvent();
+        }
+    }
+    
     private void ProcessPlayerClickInputTool(GridPropertyDetails gridPropertyDetails, ItemDetails itemDetails, Vector3Int playerDirection)
     {
         switch (itemDetails.itemType)
@@ -246,42 +290,6 @@ public class Player : SingletonMonobehaviour<Player>
 
         PlayerInputIsDisabled = false;
         playerToolUseDisabled = false;
-    }
-
-    private Vector3Int GetPlayerClickDirection(Vector3Int cursorGridPosition, Vector3Int playerGridPosition)
-    {
-        if (cursorGridPosition.x > playerGridPosition.x)
-        {
-            return Vector3Int.right;
-        }
-        else if(cursorGridPosition.x < playerGridPosition.x)
-        {
-            return Vector3Int.left;
-        }
-        else if(cursorGridPosition.y > playerGridPosition.y)
-        {
-            return Vector3Int.up;
-        }
-        else
-        {
-            return Vector3Int.down;
-        }
-    }
-
-    private void ProcessPlayerClickInputSeed(ItemDetails itemDetails)
-    {
-        if (itemDetails.canBeDropped && gridCursor.CursorPositionIsValid)
-        {
-            EventHandler.CallDropSelectedItemEvent();
-        }
-    }
-
-    private void ProcessPlayerClickInputCommodity(ItemDetails itemDetails)
-    {
-        if (itemDetails.canBeDropped && gridCursor.CursorPositionIsValid)
-        {
-            EventHandler.CallDropSelectedItemEvent();
-        }
     }
     #endregion
 

@@ -91,7 +91,7 @@ public class SceneItemsManager : SingletonMonobehaviour<SceneItemsManager>, ISav
     //获取Item物体的transform
     private void AfterSceneLoaded()
     {
-        parentItem = GameObject.FindGameObjectWithTag(Tags.ItemParentTransform).transform;
+        parentItem = GameObject.FindGameObjectWithTag(Tags.ItemsParentTransform).transform;
     }
     
     private void OnEnable()
