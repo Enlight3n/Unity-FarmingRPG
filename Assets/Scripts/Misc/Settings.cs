@@ -12,6 +12,8 @@ public static class Settings
     public const float walkingSpeed = 2.666f * 10f;
     public static float useToolAnimationPause = 0.25f;
     public static float afterUseToolAnimationPause = 0.2f;
+    public static float liftToolAnimationPause = 0.4f;
+    public static float afterLiftToolAnimationPause = 0.4f;
 
     public static Vector2 cursorSize = Vector2.one;
     public const float gridCellSize = 1f;

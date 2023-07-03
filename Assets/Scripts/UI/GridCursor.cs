@@ -173,6 +173,7 @@ public class GridCursor : MonoBehaviour
                        return;
                    } 
                    break;
+               case ItemType.Watering_tool:
                case ItemType.Hoeing_tool:
                    if (!IsCursorValidForTool(gridPropertyDetails, itemDetails))
                    {
@@ -221,7 +222,8 @@ public class GridCursor : MonoBehaviour
         return gridPropertyDetails.canDropItem;
     }
     
-    //
+    //这个函数是为了判断光标是有效还是无效的，是上面SetCursorValidity函数的续写，上面判断了一次之后，都挪到这里来了
+    //按理来说，这里拆成多个函数写会更加规整
     private bool IsCursorValidForTool(GridPropertyDetails gridPropertyDetails, ItemDetails itemDetails)
     {
         switch (itemDetails.itemType)
@@ -259,6 +261,15 @@ public class GridCursor : MonoBehaviour
                     {
                         return true;
                     }
+                }
+                else
+                {
+                    return false;
+                }
+            case ItemType.Watering_tool:
+                if (gridPropertyDetails.daysSinceDug > -1 && gridPropertyDetails.daysSinceWatered == -1)
+                {
+                    return true;
                 }
                 else
                 {

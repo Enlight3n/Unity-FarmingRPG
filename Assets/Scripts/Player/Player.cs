@@ -11,6 +11,8 @@ public class Player : SingletonMonobehaviour<Player>
 {
     private WaitForSeconds afterUseToolAnimationPause;
     private WaitForSeconds useToolAnimationPause;
+    private WaitForSeconds liftToolAnimationPause;
+    private WaitForSeconds afterLiftToolAnimationPause;
     private bool playerToolUseDisabled = false;
     
     private AnimationOverrides animationOverrides;
@@ -86,8 +88,12 @@ public class Player : SingletonMonobehaviour<Player>
     private void Start()
     {
         gridCursor = FindObjectOfType<GridCursor>();
+        
+        //从settings中赋值
         afterUseToolAnimationPause = new WaitForSeconds(Settings.afterUseToolAnimationPause);
         useToolAnimationPause = new WaitForSeconds(Settings.useToolAnimationPause);
+        liftToolAnimationPause = new WaitForSeconds(Settings.liftToolAnimationPause);
+        afterLiftToolAnimationPause = new WaitForSeconds(Settings.afterLiftToolAnimationPause);
     }
 
     private void Update()
@@ -175,6 +181,7 @@ public class Player : SingletonMonobehaviour<Player>
                         ProcessPlayerClickInputCommodity(itemDetails);
                     }
                     break;
+                case ItemType.Watering_tool:
                 case ItemType.Hoeing_tool:
                     ProcessPlayerClickInputTool(gridPropertyDetails, itemDetails, playerDirection);
                     break;
@@ -238,10 +245,65 @@ public class Player : SingletonMonobehaviour<Player>
                     HoeGroundAtCursor(gridPropertyDetails, playerDirection);
                 }
                 break;
-            
+            case ItemType.Watering_tool:
+                if (gridCursor.CursorPositionIsValid)
+                {
+                    WaterGroundAtCursor(gridPropertyDetails, playerDirection);
+                }
+                break;
             default:
                 break;
         }
+    }
+
+    private void WaterGroundAtCursor(GridPropertyDetails gridPropertyDetails, Vector3Int playerDirection)
+    {
+        // Trigger animation
+        StartCoroutine(WaterGroundAtCursorRoutine(playerDirection, gridPropertyDetails));
+    }
+
+    private IEnumerator WaterGroundAtCursorRoutine(Vector3Int playerDirection, GridPropertyDetails gridPropertyDetails)
+    {
+        PlayerInputIsDisabled = true;
+        playerToolUseDisabled = true;
+        
+        toolCharacterAttribute.partVariantType = PartVariantType.wateringCan;
+        characterAttributeCustomisationList.Clear();
+        characterAttributeCustomisationList.Add(toolCharacterAttribute);
+        animationOverrides.ApplyCharacterCustomisationParameters(characterAttributeCustomisationList);
+
+        // TODO: 这里要确保水壶里有水
+        toolEffect = ToolEffect.watering;
+
+        if (playerDirection == Vector3Int.right)
+        {
+            isLiftingToolRight = true;
+        }
+        else if (playerDirection == Vector3Int.left)
+        {
+            isLiftingToolLeft = true;
+        }
+        else if (playerDirection == Vector3Int.up)
+        {
+            isLiftingToolUp = true;
+        }
+        else if (playerDirection == Vector3Int.down)
+        {
+            isLiftingToolDown = true;
+        }
+
+        yield return liftToolAnimationPause;
+
+        // Set Grid property details for watered ground
+        if (gridPropertyDetails.daysSinceWatered == -1)
+        {
+            gridPropertyDetails.daysSinceWatered = 0;
+        }
+        
+        yield return afterLiftToolAnimationPause;
+
+        PlayerInputIsDisabled = false;
+        playerToolUseDisabled = false;
     }
 
     private void HoeGroundAtCursor(GridPropertyDetails gridPropertyDetails, Vector3Int playerDirection)
