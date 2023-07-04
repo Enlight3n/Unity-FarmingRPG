@@ -2,7 +2,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-
 /// <summary>
 /// 这个脚本仅附在不同类型的特殊瓦片贴图上，其他类也不会使用它
 /// 当我们绘制完该层次的瓦片贴图以后，这个脚本负责将数据写入对应的数据容器中
