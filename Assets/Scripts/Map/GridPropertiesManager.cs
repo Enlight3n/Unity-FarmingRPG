@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Linq;
-using Unity.VisualScripting;
+
 
 /// <summary>
 /// 整体来说，这个类的作用就是，将数据容器中保存的GridProperty细化为GridPropertyDetails，然后按场景装载到GameObjectSave中，
@@ -135,7 +135,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     {
         if (GameObjectSave.sceneData.TryGetValue(sceneName, out SceneSave sceneSave))
         {
-            if (sceneSave.gridPropertyDetailsDictionary != null);
+            if (sceneSave.gridPropertyDetailsDictionary != null)
             {
                 gridPropertyDictionary = sceneSave.gridPropertyDetailsDictionary;
             }

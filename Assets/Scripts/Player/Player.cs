@@ -492,7 +492,7 @@ public class Player : SingletonMonobehaviour<Player>
                 if (itemArray[i] != null)
                 {
                     // 如果可收获则摧毁物体
-                    if (InventoryManager.Instance.GetItemDetails(itemArray[i].ItemCode).itemType == ItemType.Reapable_scenary)
+                    if (InventoryManager.Instance.GetItemDetails(itemArray[i].ItemCode).itemType == ItemType.Reapable_scenery)
                     {
                         // 粒子位置
                         Vector3 effectPosition = new Vector3(itemArray[i].transform.position.x, itemArray[i].transform.position.y + Settings.gridCellSize / 2f, itemArray[i].transform.position.z);
