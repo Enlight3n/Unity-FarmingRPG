@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using UnityEngine;
 
 //声明一个委托MovementDelegate，这个委托有传入参数，因此后面装入该委托的方法应当具有同样参数
 //这里采用自定义委托，而不是unity自带的Action是因为Action最多只能传入16个参数
@@ -164,5 +164,12 @@ public static class EventHandler
     }
 
 
+    public static event Action<Vector3, HarvestActionEffect> HarvestActionEffectEvent;
+
+    public static void CallHarvestActionEffectEvent(Vector3 effectPosition, HarvestActionEffect harvestActionEffect)
+    {
+        if (HarvestActionEffectEvent != null)
+            HarvestActionEffectEvent(effectPosition, harvestActionEffect);
+    }
 
 }

@@ -470,13 +470,13 @@ public class Player : SingletonMonobehaviour<Player>
                     break;
             }
 
-            // Define centre point of square which will be used for collision testing
+            // 定义用于碰撞检测的正方形的中心点
             Vector2 point =
                 new Vector2(
                     GetPlayerCentrePosition().x + (playerDirection.x * (equippedItemDetails.itemUseRadius / 2f)),
                     GetPlayerCentrePosition().y + playerDirection.y * (equippedItemDetails.itemUseRadius / 2f));
 
-            // Define size of the square which will be used for collision testing
+            // 定义用于碰撞检测的正方形的大小
             Vector2 size = new Vector2(equippedItemDetails.itemUseRadius, equippedItemDetails.itemUseRadius);
 
             //获取位于给定正方形中的，具有2D碰撞体的Item组件
@@ -486,7 +486,7 @@ public class Player : SingletonMonobehaviour<Player>
 
             int reapableItemCount = 0;
 
-            // Loop through all items retrieved
+            // 遍历接受到的物体
             for (int i = itemArray.Length - 1; i >= 0; i--)
             {
                 if (itemArray[i] != null)
@@ -495,8 +495,13 @@ public class Player : SingletonMonobehaviour<Player>
                     if (InventoryManager.Instance.GetItemDetails(itemArray[i].ItemCode).itemType == ItemType.Reapable_scenery)
                     {
                         // 粒子位置
-                        Vector3 effectPosition = new Vector3(itemArray[i].transform.position.x, itemArray[i].transform.position.y + Settings.gridCellSize / 2f, itemArray[i].transform.position.z);
+                        Vector3 effectPosition = new Vector3(itemArray[i].transform.position.x,
+                            itemArray[i].transform.position.y + Settings.gridCellSize / 2f,
+                            itemArray[i].transform.position.z);
 
+                        //调用显示收获后的粒子系统的事件
+                        EventHandler.CallHarvestActionEffectEvent(effectPosition, HarvestActionEffect.reaping);
+                        
                         Destroy(itemArray[i].gameObject);
 
                         reapableItemCount++;

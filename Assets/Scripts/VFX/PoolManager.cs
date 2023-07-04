@@ -61,7 +61,7 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
         }
     }
 
-    
+    //唯一的public方法，外部使用对象池时，只需调用这个方法即可
     public GameObject ReuseObject(GameObject prefab, Vector3 position, Quaternion rotation)
     {
         int poolKey = prefab.GetInstanceID();

@@ -93,3 +93,13 @@ public enum GridBoolProperty
     isPath,
     isNPCObstacle
 }
+
+public enum HarvestActionEffect
+{
+    deciduousLeavesFalling,
+    pineConeFalling,
+    choppingTreeTrunk,
+    breakingStone,
+    reaping,
+    none
+}
