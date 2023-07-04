@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 //声明一个委托MovementDelegate，这个委托有传入参数，因此后面装入该委托的方法应当具有同样参数
@@ -16,15 +17,11 @@ public delegate void MovementDelegate(
 public static class EventHandler
 {
     //这个事件用来当玩家拾取的时候，对物品栏状态进行更新
-    // InventoryLocation是一个enum数组，InventoryItem是一个结构体
     public static event Action<InventoryLocation, List<InventoryItem>> InventoryUpdatedEvent;
     public static void CallInventoryUpdatedEvent(InventoryLocation inventoryLocation,
         List<InventoryItem> inventoryList)
     {
-        if (InventoryUpdatedEvent != null)
-        {
-            InventoryUpdatedEvent(inventoryLocation,inventoryList);
-        }
+        InventoryUpdatedEvent?.Invoke(inventoryLocation,inventoryList);
     }
     
     
@@ -39,17 +36,14 @@ public static class EventHandler
         bool isSwingToolRight, bool isSwingToolLeft, bool isSwingToolUp, bool isSwingToolDown,
         bool idleUp, bool idleDown, bool idleRight, bool idleLeft)
     {
-        if (MovementEvent != null)
-        {
-            MovementEvent(inputX, inputY,
-                isWalking, isRunning, isIdle, isCarrying,
-                toolEffect,
-                isUsingToolRight, isUsingToolLeft, isUsingToolUp, isUsingToolDown,
-                isLiftingToolRight, isLiftingToolLeft, isLiftingToolUp, isLiftingToolDown,
-                isPickingRight, isPickingLeft, isPickingUp, isPickingDown,
-                isSwingToolRight, isSwingToolLeft, isSwingToolUp, isSwingToolDown,
-                idleUp, idleDown, idleRight, idleLeft);
-        }
+        MovementEvent?.Invoke(inputX, inputY,
+            isWalking, isRunning, isIdle, isCarrying,
+            toolEffect,
+            isUsingToolRight, isUsingToolLeft, isUsingToolUp, isUsingToolDown,
+            isLiftingToolRight, isLiftingToolLeft, isLiftingToolUp, isLiftingToolDown,
+            isPickingRight, isPickingLeft, isPickingUp, isPickingDown,
+            isSwingToolRight, isSwingToolLeft, isSwingToolUp, isSwingToolDown,
+            idleUp, idleDown, idleRight, idleLeft);
     }
 
     
@@ -61,50 +55,35 @@ public static class EventHandler
     public static void CallAdvanceGameMinuteEvent(int gameYear, Season gameSeason, int gameDay, string gameDayOfWeek,
         int gameHour, int gameMinute, int gameSecond)
     {
-        if (AdvanceGameMinuteEvent != null)
-        {
-            AdvanceGameMinuteEvent(gameYear, gameSeason, gameDay, gameDayOfWeek, gameHour, gameMinute, gameSecond);
-        }
+        AdvanceGameMinuteEvent?.Invoke(gameYear, gameSeason, gameDay, gameDayOfWeek, gameHour, gameMinute, gameSecond);
     }
     
     public static event Action<int, Season, int, string, int, int, int> AdvanceGameHourEvent;
     public static void CallAdvanceGameHourEvent(int gameYear, Season gameSeason, int gameDay, string gameDayOfWeek,
         int gameHour, int gameMinute, int gameSecond)
     {
-        if (AdvanceGameHourEvent != null)
-        {
-            AdvanceGameHourEvent(gameYear, gameSeason, gameDay, gameDayOfWeek, gameHour, gameMinute, gameSecond);
-        }
+        AdvanceGameHourEvent?.Invoke(gameYear, gameSeason, gameDay, gameDayOfWeek, gameHour, gameMinute, gameSecond);
     }
     
     public static event Action<int, Season, int, string, int, int, int> AdvanceGameDayEvent;
     public static void CallAdvanceGameDayEvent(int gameYear, Season gameSeason, int gameDay, string gameDayOfWeek,
         int gameHour, int gameMinute, int gameSecond)
     {
-        if (AdvanceGameDayEvent != null)
-        {
-            AdvanceGameDayEvent(gameYear, gameSeason, gameDay, gameDayOfWeek, gameHour, gameMinute, gameSecond);
-        }
+        AdvanceGameDayEvent?.Invoke(gameYear, gameSeason, gameDay, gameDayOfWeek, gameHour, gameMinute, gameSecond);
     }
     
     public static event Action<int, Season, int, string, int, int, int> AdvanceGameSeasonEvent;
     public static void CallAdvanceGameSeasonEvent(int gameYear, Season gameSeason, int gameDay, string gameDayOfWeek,
         int gameHour, int gameMinute, int gameSecond)
     {
-        if (AdvanceGameSeasonEvent != null)
-        {
-            AdvanceGameSeasonEvent(gameYear, gameSeason, gameDay, gameDayOfWeek, gameHour, gameMinute, gameSecond);
-        }
+        AdvanceGameSeasonEvent?.Invoke(gameYear, gameSeason, gameDay, gameDayOfWeek, gameHour, gameMinute, gameSecond);
     }
     
     public static event Action<int, Season, int, string, int, int, int> AdvanceGameYearEvent;
     public static void CallAdvanceGameYearEvent(int gameYear, Season gameSeason, int gameDay, string gameDayOfWeek,
         int gameHour, int gameMinute, int gameSecond)
     {
-        if (AdvanceGameYearEvent != null)
-        {
-            AdvanceGameYearEvent(gameYear, gameSeason, gameDay, gameDayOfWeek, gameHour, gameMinute, gameSecond);
-        }
+        AdvanceGameYearEvent?.Invoke(gameYear, gameSeason, gameDay, gameDayOfWeek, gameHour, gameMinute, gameSecond);
     }
     #endregion
 
@@ -117,37 +96,26 @@ public static class EventHandler
     public static event Action BeforeSceneUnloadFadeOutEvent;
     public static void CallBeforeSceneUnloadFadeOutEvent()
     {
-        if (BeforeSceneUnloadFadeOutEvent != null)
-        {
-            BeforeSceneUnloadFadeOutEvent();
-        }
+        BeforeSceneUnloadFadeOutEvent?.Invoke();
     }
     
     public static event Action BeforeSceneUnloadEvent;
     public static void CallBeforeSceneUnloadEvent()
     {
-        if (BeforeSceneUnloadEvent != null)
-        {
-            BeforeSceneUnloadEvent();
-        }
+        BeforeSceneUnloadEvent?.Invoke();
     }
     
     public static event Action AfterSceneLoadEvent;
     public static void CallAfterSceneLoadEvent()
     {
-        if (AfterSceneLoadEvent != null)
-        {
-            AfterSceneLoadEvent();
-        }
+        AfterSceneLoadEvent?.Invoke();
     }
     
     public static event Action AfterSceneLoadFadeInEvent;
     public static void CallAfterSceneLoadFadeInEvent()
     {
-        if (AfterSceneLoadFadeInEvent != null)
-        {
-            AfterSceneLoadFadeInEvent();
-        }
+        AfterSceneLoadFadeInEvent?.Invoke();
+        
     }
     #endregion
     
@@ -157,19 +125,19 @@ public static class EventHandler
     public static event Action DropSelectedItemEvent;
     public static void CallDropSelectedItemEvent()
     {
-        if (DropSelectedItemEvent != null)
-        {
-            DropSelectedItemEvent();
-        }
+        DropSelectedItemEvent?.Invoke();
     }
 
 
     public static event Action<Vector3, HarvestActionEffect> HarvestActionEffectEvent;
-
     public static void CallHarvestActionEffectEvent(Vector3 effectPosition, HarvestActionEffect harvestActionEffect)
     {
-        if (HarvestActionEffectEvent != null)
-            HarvestActionEffectEvent(effectPosition, harvestActionEffect);
+        HarvestActionEffectEvent?.Invoke(effectPosition, harvestActionEffect);
     }
 
+    public static event Action RemoveSelectedItemFromInventoryEvent;
+    public static void CallRemoveSelectedItemFromInventoryEvent()
+    {
+        RemoveSelectedItemFromInventoryEvent?.Invoke();
+    }
 }

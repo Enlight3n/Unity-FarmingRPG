@@ -1,4 +1,3 @@
-
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
@@ -149,8 +148,7 @@ public class Player : SingletonMonobehaviour<Player>
     
     
     
-    #region 点击放置物体的函数
-
+    #region 点击放置、使用物体的函数
     private void PlayerClickInput()
     {
         if (!playerToolUseDisabled)
@@ -191,7 +189,7 @@ public class Player : SingletonMonobehaviour<Player>
                 case ItemType.Seed:
                     if (Input.GetMouseButtonDown(0))
                     {
-                        ProcessPlayerClickInputSeed(itemDetails);
+                        ProcessPlayerClickInputSeed(gridPropertyDetails, itemDetails);
                     }
                     break;
                 case ItemType.Commodity:
@@ -237,16 +235,41 @@ public class Player : SingletonMonobehaviour<Player>
     }
     #endregion
 
-    #region 处理不同类型物品放置效果的方法
-    
-    private void ProcessPlayerClickInputSeed(ItemDetails itemDetails)
+    #region (private)处理不同类型物品放置、使用效果的方法
+
+    #region 种子的放置和使用
+
+    private void ProcessPlayerClickInputSeed(GridPropertyDetails gridPropertyDetails, ItemDetails itemDetails)
     {
-        if (itemDetails.canBeDropped && gridCursor.CursorPositionIsValid)
+        //判断是否可以种地的
+        if (itemDetails.canBeDropped && gridCursor.CursorPositionIsValid && gridPropertyDetails.daysSinceDug > -1 &&
+            gridPropertyDetails.seedItemCode == -1)
+        {
+            PlantSeedAtCursor(gridPropertyDetails, itemDetails);
+        }
+        else if (itemDetails.canBeDropped && gridCursor.CursorPositionIsValid)
         {
             EventHandler.CallDropSelectedItemEvent();
         }
     }
 
+    private void PlantSeedAtCursor(GridPropertyDetails gridPropertyDetails, ItemDetails itemDetails)
+    {
+        //更新gridPropertyDetails
+        gridPropertyDetails.seedItemCode = itemDetails.itemCode;
+        gridPropertyDetails.growthDays = 0;
+
+        //显示作物
+        GridPropertiesManager.Instance.DisplayPlantedCrop(gridPropertyDetails);
+
+        //从物品栏移除
+        EventHandler.CallRemoveSelectedItemFromInventoryEvent();
+
+    }
+    #endregion
+
+
+    #region 货物的放置
     private void ProcessPlayerClickInputCommodity(ItemDetails itemDetails)
     {
         if (itemDetails.canBeDropped && gridCursor.CursorPositionIsValid)
@@ -254,6 +277,10 @@ public class Player : SingletonMonobehaviour<Player>
             EventHandler.CallDropSelectedItemEvent();
         }
     }
+    #endregion
+
+    
+    #region 工具的使用
     
     private void ProcessPlayerClickInputTool(GridPropertyDetails gridPropertyDetails, ItemDetails itemDetails, Vector3Int playerDirection)
     {
@@ -284,28 +311,7 @@ public class Player : SingletonMonobehaviour<Player>
         }
     }
 
-    private Vector3Int GetPlayerDirection(Vector3 cursorPosition, Vector3 playerPosition)
-    {
-        if (cursorPosition.x > playerPosition.x && cursorPosition.y < (playerPosition.y + cursor.ItemUseRadius / 2f)
-                                                && cursorPosition.y > (playerPosition.y - cursor.ItemUseRadius / 2f))
-        {
-            return Vector3Int.right;
-        }
-        else if (cursorPosition.x < playerPosition.x && cursorPosition.y < (playerPosition.y + cursor.ItemUseRadius / 2f)
-                 && cursorPosition.y > (playerPosition.y - cursor.ItemUseRadius / 2f)
-        )
-        {
-            return Vector3Int.left;
-        }
-        else if (cursorPosition.y > playerPosition.y)
-        {
-            return Vector3Int.up;
-        }
-        else
-        {
-            return Vector3Int.down;
-        }
-    }
+    
 
 
     private void HoeGroundAtCursor(GridPropertyDetails gridPropertyDetails, Vector3Int playerDirection)
@@ -357,6 +363,7 @@ public class Player : SingletonMonobehaviour<Player>
         PlayerInputIsDisabled = false;
         playerToolUseDisabled = false;
     }
+    
     
     private void WaterGroundAtCursor(GridPropertyDetails gridPropertyDetails, Vector3Int playerDirection)
     {
@@ -513,7 +520,7 @@ public class Player : SingletonMonobehaviour<Player>
         }
     }
 
-    
+    #endregion
     #endregion
 
     
@@ -616,7 +623,7 @@ public class Player : SingletonMonobehaviour<Player>
     
     //要禁用玩家移动，只需要调用一次下面的DisablePlayerInputAndResetMovement函数即可
     //要重新启用，只需要设置PlayerInputIsDisabled为false即可
-    #region 处理玩家拖拽物品栏时禁用移动的相关函数
+    #region 禁用玩家移动的相关函数
 
     private void ResetMovement()
     {
@@ -643,7 +650,7 @@ public class Player : SingletonMonobehaviour<Player>
             false, false,false, false);
     }
 
-    public void DisablePlayerInput()
+    private void DisablePlayerInput()
     {
         PlayerInputIsDisabled = true;
     }
@@ -714,6 +721,29 @@ public class Player : SingletonMonobehaviour<Player>
         return mainCamera.WorldToViewportPoint(transform.position);
     }
 
+    private Vector3Int GetPlayerDirection(Vector3 cursorPosition, Vector3 playerPosition)
+    {
+        if (cursorPosition.x > playerPosition.x && cursorPosition.y < (playerPosition.y + cursor.ItemUseRadius / 2f)
+                                                && cursorPosition.y > (playerPosition.y - cursor.ItemUseRadius / 2f))
+        {
+            return Vector3Int.right;
+        }
+        else if (cursorPosition.x < playerPosition.x && cursorPosition.y < (playerPosition.y + cursor.ItemUseRadius / 2f)
+                                                     && cursorPosition.y > (playerPosition.y - cursor.ItemUseRadius / 2f)
+                )
+        {
+            return Vector3Int.left;
+        }
+        else if (cursorPosition.y > playerPosition.y)
+        {
+            return Vector3Int.up;
+        }
+        else
+        {
+            return Vector3Int.down;
+        }
+    }
+    
     //返回玩家的中心位置，因为玩家的轴心在脚底
     public Vector3 GetPlayerCentrePosition()
     {

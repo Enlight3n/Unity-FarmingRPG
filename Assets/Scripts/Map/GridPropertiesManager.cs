@@ -6,12 +6,16 @@ using System.Linq;
 
 
 /// <summary>
-/// 整体来说，这个类的作用就是，将数据容器中保存的GridProperty细化为GridPropertyDetails，然后按场景装载到GameObjectSave中，
-/// 每次切换场景，用gridPropertyDictionary来替换或者被替换
+/// <para>这个类的作用就是管理网格的GridPropertyDetails——将数据容器中的GridProperty细化为GridPropertyDetails</para>
+/// <para>场景保存的时候——保存旧场景的网格数据</para>
+/// <para>场景加载的时候——加载新场景的网格数据，接着清除再显示新场景的锄地、浇水贴图，作物</para>
+/// <para>日期推进的时候——清除再显示当前场景的锄地、浇水贴图，作物</para>
+/// <para>我们用gridPropertyDictionary来指明当前场景的网格数据</para>
 /// </summary>
 [RequireComponent(typeof(GenerateGUID))]
 public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManager>,ISaveable
 {
+    private Transform cropParentTransform;
     
     private Grid grid; //暂时未用
     private Tilemap groundDecoration1; //锄地的地面
@@ -25,6 +29,8 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     //获取场景中全部的数据容器
     [SerializeField] private SO_GridProperties[] so_gridPropertiesArray = null;
 
+    //保存种植信息的数据容器
+    [SerializeField] private SO_CropDetailsList so_CropDetailsList = null;
     
     private string _iSaveableUniqueID;
     public string ISaveableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
@@ -58,49 +64,69 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
 
     private void AfterSceneLoaded()
     {
+        if((GameObject.FindGameObjectWithTag(Tags.CropsParentTransform)!=null))
+        {
+            cropParentTransform = GameObject.FindGameObjectWithTag(Tags.CropsParentTransform).transform;
+        }
+        else
+        {
+            cropParentTransform = null;
+        }
+        
         grid = GameObject.FindObjectOfType<Grid>();
+        
         
         groundDecoration1 = GameObject.FindGameObjectWithTag(Tags.GroundDecoration1).GetComponent<Tilemap>();
         groundDecoration2 = GameObject.FindGameObjectWithTag(Tags.GroundDecoration2).GetComponent<Tilemap>();
     }
-    private void AdvanceDay(int gameYear, Season gameSeason, int gameDay, string gameDayOfWeek, int gameHour, int gameMinute, int gameSecond)
+
+    private void AdvanceDay(int gameYear, Season gameSeason, int gameDay, string gameDayOfWeek, int gameHour,
+        int gameMinute, int gameSecond)
     {
-        // 所有呈现的网格详细属性
+        //清除
         ClearDisplayGridPropertyDetails();
 
-        // Loop through all scenes - by looping through all gridproperties in the array
+        //遍历多个场景的数据容器
         foreach (SO_GridProperties so_GridProperties in so_gridPropertiesArray)
         {
-            // Get gridpropertydetails dictionary for scene
-            //获取
+            //获取场景的数据
             if (GameObjectSave.sceneData.TryGetValue(so_GridProperties.sceneName.ToString(), out SceneSave sceneSave))
             {
                 if (sceneSave.gridPropertyDetailsDictionary != null)
                 {
+                    //处理gridPropertyDetails的字典
                     for (int i = sceneSave.gridPropertyDetailsDictionary.Count - 1; i >= 0; i--)
                     {
-                        KeyValuePair<string, GridPropertyDetails> item = sceneSave.gridPropertyDetailsDictionary.ElementAt(i);
+                        KeyValuePair<string, GridPropertyDetails> item =
+                            sceneSave.gridPropertyDetailsDictionary.ElementAt(i);
 
                         GridPropertyDetails gridPropertyDetails = item.Value;
 
-                        #region Update all grid properties to reflect the advance in the day
-
-                        // If ground is watered, then clear water
+                        #region 随着日子推进，更新相应网格的性质
+                        
+                        //若有作物，长一天
+                        if (gridPropertyDetails.growthDays > -1)
+                        {
+                            gridPropertyDetails.growthDays++;
+                        }
+                        
+                        //若已浇水，则恢复为未浇水状态
                         if (gridPropertyDetails.daysSinceWatered > -1)
                         {
                             gridPropertyDetails.daysSinceWatered = -1;
                         }
 
-                        // Set gridpropertydetails
-                        SetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY, gridPropertyDetails, sceneSave.gridPropertyDetailsDictionary);
+                        //保存gridPropertyDetails
+                        SetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY,
+                            gridPropertyDetails, sceneSave.gridPropertyDetailsDictionary);
 
-                        #endregion Update all grid properties to reflect the advance in the day
+                        #endregion 
                     }
                 }
             }
         }
     
-        // Display grid property details to reflect changed values
+        //显示
         DisplayGridPropertyDetails();
     }
 
@@ -144,8 +170,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
             if (gridPropertyDictionary.Count > 0)
             {
                 ClearDisplayGridPropertyDetails();
-
-                // 实例化当前场景的网格属性细节
+                
                 DisplayGridPropertyDetails();
             }
         }
@@ -229,7 +254,117 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     }
     
     
-    #region 修改锄地后的单个瓦片贴图
+    #region (private)重要方法：清除和显示全部：锄地、浇水贴图，作物
+    
+    private void ClearDisplayGridPropertyDetails()
+    {
+        //清除锄地浇水的瓦片贴图
+        ClearDisplayGroundDecorations(); 
+
+        //清除所有的作物
+        ClearDisplayAllPlantedCrops();
+    }
+
+    
+
+    private void DisplayGridPropertyDetails()
+    {
+        foreach (KeyValuePair<string, GridPropertyDetails> item in gridPropertyDictionary)
+        {
+            GridPropertyDetails gridPropertyDetails = item.Value;
+
+            DisplayDugGround(gridPropertyDetails);
+            
+            DisplayWateredGround(gridPropertyDetails);
+
+            DisplayPlantedCrop(gridPropertyDetails);
+        }
+    }
+    
+    #endregion
+
+
+
+    #region 销毁和重生物体（这些方法都被上面两个重要方法调用）
+
+    #region (private)清除全部的锄地和浇水贴图 + 销毁作物
+    
+    //清除所有的锄地和浇水贴图
+    private void ClearDisplayGroundDecorations()
+    {
+        groundDecoration1.ClearAllTiles();
+        groundDecoration2.ClearAllTiles();
+    }
+    
+    //销毁所有的作物
+    private void ClearDisplayAllPlantedCrops()
+    {
+        Crop[] cropArray;
+        cropArray = FindObjectsOfType<Crop>();
+
+        foreach (Crop crop in cropArray)
+        {
+            Destroy(crop.gameObject);
+        }
+    }
+    #endregion
+    
+
+    #region (public)生成作物——根据单个网格的gridPropertyDetails
+    
+    //根据网格的gridPropertyDetails生成作物，并给他们添加Crop
+    public void DisplayPlantedCrop(GridPropertyDetails gridPropertyDetails)
+    {
+        if (gridPropertyDetails.seedItemCode > -1)
+        {
+            
+            CropDetails cropDetails = so_CropDetailsList.GetCropDetails(gridPropertyDetails.seedItemCode);
+            
+            
+            int growthStages = cropDetails.growthDays.Length;
+            int currentGrowthStage = 0;
+            int daysCounter = cropDetails.totalGrowthDays; 
+            //通过作物的生长周期，每个周期的生长天数，总成熟天数，以及当前生长天数，计算出当前的阶段
+            for (int i = growthStages - 1; i >= 0; i--)
+            {
+                if (gridPropertyDetails.growthDays >= daysCounter) //growthDays是作物至今的生长天数
+                {
+                    currentGrowthStage = i;
+                    break;
+                }
+
+                daysCounter -= cropDetails.growthDays[i]; //daysCounter取值只能为连续的前n个周期数之和
+            }
+            
+            
+            GameObject cropPrefab = cropDetails.growthPrefab[currentGrowthStage];
+
+            Sprite growthSprite = cropDetails.growthSprite[currentGrowthStage];
+
+            Vector3 worldPosition =
+                groundDecoration2.CellToWorld(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY, 0));
+
+            //在网格底边中心生成作物
+            worldPosition = new Vector3(worldPosition.x + Settings.gridCellSize / 2, worldPosition.y, worldPosition.z);
+
+            GameObject cropInstance = Instantiate(cropPrefab, worldPosition, Quaternion.identity);
+
+            cropInstance.GetComponentInChildren<SpriteRenderer>().sprite = growthSprite;
+            
+            cropInstance.transform.SetParent(cropParentTransform);
+
+            cropInstance.GetComponent<Crop>().cropGridPosition =
+                new Vector2Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY);
+        }
+    }
+    
+    #endregion
+
+    
+    #region 显示锄地和浇水后的单个瓦片贴图
+    
+    #region (public)显示的主要方法 
+
     public void DisplayDugGround(GridPropertyDetails gridPropertyDetails)
     {
         //如果>-1，说明这块地被锄过，则应该显示
@@ -238,7 +373,6 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
             ConnectDugGround(gridPropertyDetails);
         }
     }
-    
     public void DisplayWateredGround(GridPropertyDetails gridPropertyDetails)
     {
         // Watered
@@ -248,7 +382,11 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         }
     }
 
+    #endregion
+
     
+    #region (private)显示的主要方法调用到的方法
+
     private void ConnectDugGround(GridPropertyDetails gridPropertyDetails)
     {
         //根据周围的瓦片是否被挖掘来寻找合适的瓦片
@@ -258,8 +396,6 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY, 0), 
             dugTile0);
 
-        
-        
         //接下来处理周围四个网格的贴图
         GridPropertyDetails adjacentGridPropertyDetails;
 
@@ -267,27 +403,31 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceDug > -1)
         {
             Tile dugTile1 = SetDugTile(gridPropertyDetails.gridX, gridPropertyDetails.gridY + 1);
-            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY + 1, 0), dugTile1);
+            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY + 1, 0),
+                dugTile1);
         }
 
         adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY - 1);
         if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceDug > -1)
         {
             Tile dugTile2 = SetDugTile(gridPropertyDetails.gridX, gridPropertyDetails.gridY - 1);
-            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY - 1, 0), dugTile2);
+            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY - 1, 0),
+                dugTile2);
         }
         adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX - 1, gridPropertyDetails.gridY);
         if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceDug > -1)
         {
             Tile dugTile3 = SetDugTile(gridPropertyDetails.gridX - 1, gridPropertyDetails.gridY);
-            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX - 1, gridPropertyDetails.gridY, 0), dugTile3);
+            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX - 1, gridPropertyDetails.gridY, 0),
+                dugTile3);
         }
 
         adjacentGridPropertyDetails = GetGridPropertyDetails(gridPropertyDetails.gridX + 1, gridPropertyDetails.gridY);
         if (adjacentGridPropertyDetails != null && adjacentGridPropertyDetails.daysSinceDug > -1)
         {
             Tile dugTile4 = SetDugTile(gridPropertyDetails.gridX + 1, gridPropertyDetails.gridY);
-            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX + 1, gridPropertyDetails.gridY, 0), dugTile4);
+            groundDecoration1.SetTile(new Vector3Int(gridPropertyDetails.gridX + 1, gridPropertyDetails.gridY, 0),
+                dugTile4);
         }
     }
     
@@ -334,8 +474,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     //传入xy坐标，根据周围格子的性质，传出当前锄的格子的恰当贴图
     private Tile SetDugTile(int xGrid, int yGrid)
     {
-        
-        //确认这个格子周围的格子是否被锄过
+        //获取周围的网格是否被锄过
         bool upDug = IsGridSquareDug(xGrid, yGrid + 1);
         bool downDug = IsGridSquareDug(xGrid, yGrid - 1);
         bool leftDug = IsGridSquareDug(xGrid - 1, yGrid);
@@ -415,8 +554,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     
     private Tile SetWateredTile(int xGrid, int yGrid)
     {
-        // Get whether surrounding tiles (up,down,left, and right) are watered or not
-
+        //获取相邻的网格是否被浇过水
         bool upWatered = IsGridSquareWatered(xGrid, yGrid + 1);
         bool downWatered = IsGridSquareWatered(xGrid, yGrid - 1);
         bool leftWatered = IsGridSquareWatered(xGrid - 1, yGrid);
@@ -493,7 +631,6 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
 
         #endregion Set appropriate tile based on whether surrounding tiles are watered or not
     }
-
     
     
     //确认是否坐标为xy的格子被锄过
@@ -534,42 +671,13 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     }
     
     #endregion
-
-    
-    
-    
-    
-    #region 重绘当前贴图
-
-    //清除所有的锄地和浇水贴图
-    private void ClearDisplayGroundDecorations()
-    {
-        groundDecoration1.ClearAllTiles();
-        groundDecoration2.ClearAllTiles();
-    }
-    private void ClearDisplayGridPropertyDetails()
-    {
-        ClearDisplayGroundDecorations(); //暂时只有这一个方法，等庄稼长出来以后还会有另一个方法
-    }
-    private void DisplayGridPropertyDetails()
-    {
-        foreach (KeyValuePair<string, GridPropertyDetails> item in gridPropertyDictionary)
-        {
-            GridPropertyDetails gridPropertyDetails = item.Value;
-
-            DisplayDugGround(gridPropertyDetails);
-            
-            DisplayWateredGround(gridPropertyDetails);
-        }
-    }
-    
+    #endregion
     #endregion
     
     
     
     
-    
-    #region 设置和获取的网格详细性质
+    #region 设置和获取的网格详细性质(public)
     
     public void SetGridPropertyDetails(int gridX, int gridY, GridPropertyDetails gridPropertyDetails)
     {

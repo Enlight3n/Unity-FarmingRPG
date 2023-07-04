@@ -59,6 +59,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
     private void OnEnable()
     {
         EventHandler.AfterSceneLoadEvent += SceneLoaded;
+        EventHandler.RemoveSelectedItemFromInventoryEvent += RemoveSelectedItemFromInventory;
         EventHandler.DropSelectedItemEvent += DropSelectedItemAtMousePosition;
     }
 
@@ -362,4 +363,22 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
         cursor.SelectedItemType = ItemType.none;
     }
     #endregion
+    
+    private void RemoveSelectedItemFromInventory()
+    {
+        if (itemDetails != null && isSelected)
+        {
+            int itemCode = itemDetails.itemCode;
+            
+            //从背包删除
+            InventoryManager.Instance.RemoveItem(InventoryLocation.player, itemCode);
+
+            // 看下还没有，没有就清除选中框
+            //如果注释掉这一行的话，虽然种了之后背包里没有了，但人还是拿着种子，而且可以一直种，直到切换了持有物
+            if (InventoryManager.Instance.FindItemInInventory(InventoryLocation.player, itemCode) == -1)
+            {
+                ClearSelectedItem();
+            }
+        }
+    }
 }

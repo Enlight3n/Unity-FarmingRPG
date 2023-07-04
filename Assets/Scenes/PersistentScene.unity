@@ -1525,7 +1525,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &528521592
 GameObject:
@@ -1764,6 +1764,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &696229489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 696229491}
+  - component: {fileID: 696229490}
+  m_Layer: 0
+  m_Name: VFXManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &696229490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696229489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f085e9f3661d404f8d7023a28e58584, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reapingPrefab: {fileID: 7590540241216486838, guid: 235c63b7a41187342826549932d99d16, type: 3}
+--- !u!4 &696229491
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696229489}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &715877061
 GameObject:
@@ -3107,7 +3152,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1482901527
 PrefabInstance:
@@ -3263,8 +3308,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fc3cb866d70298439837d9089153a4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectPoolTransform: {fileID: 0}
-  pool: []
+  objectPoolTransform: {fileID: 1543788792}
+  pool:
+  - poolSize: 1
+    prefab: {fileID: 7590540241216486838, guid: 235c63b7a41187342826549932d99d16, type: 3}
 --- !u!4 &1543788792
 Transform:
   m_ObjectHideFlags: 0
@@ -4575,6 +4622,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fb218a24dfd98964ab2cee4fffff228c, type: 2}
   - {fileID: 11400000, guid: d74aa141933d480489a41802d13adaa2, type: 2}
   - {fileID: 11400000, guid: 67ff0ecb9281e5c49a0ed4c0414e10d9, type: 2}
+  so_CropDetailsList: {fileID: 11400000, guid: 40620d8a17039944091a0018c58094bc, type: 2}
 --- !u!114 &2059307568
 MonoBehaviour:
   m_ObjectHideFlags: 0
