@@ -17,10 +17,13 @@ public class CropDetails
     
     //在收获动画以前，指明作物是否被禁用，因为作物其实被启用了会被直接拾取
     public bool hideCropBeforeHarvestedAnimation;  
+    
     //在收获动画以前，指明作物碰撞体是否被禁用
     public bool disableCropCollidersBeforeHarvestedAnimation; 
-    //是否在最后阶段存在被收获动画，如树被砍伐的时候会摇晃
+    
+    //是否在最后阶段存在收获动画
     public bool isHarvestedAnimation; 
+    
     //是否在玩家的位置生成作物
     public bool spawnCropProducedAtPlayerPosition;
    
@@ -28,7 +31,8 @@ public class CropDetails
     public HarvestActionEffect harvestActionEffect; // 指明哪种粒子效果
     
     [ItemCodeDescription] public int[] harvestToolItemCode; //指明用来收获的工具的类型，如果是0，则表明不用工具
-    public int[] requiredHarvestActions; ////根据harvestToolItemCode，相关的收获动作number
+    
+    public int[] requiredHarvestActions; ////每种工具对应的收获动作的数量，如树需要斧子砍五次才倒
     
     [ItemCodeDescription] public int[] cropProducedItemCode; //收获的物体的ID
 
