@@ -282,6 +282,7 @@ public class GridCursor : MonoBehaviour
                 {
                     return false;
                 }
+            case ItemType.Chopping_tool:
             case ItemType.Collecting_tool:
 
                 //检查物体是否可以被所选的物体收获，检查物体是否成熟

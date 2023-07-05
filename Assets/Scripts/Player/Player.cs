@@ -209,6 +209,7 @@ public class Player : SingletonMonobehaviour<Player>
                 case ItemType.Watering_tool:
                 case ItemType.Reaping_tool:
                 case ItemType.Hoeing_tool:
+                case ItemType.Chopping_tool:
                 case ItemType.Collecting_tool:
                     ProcessPlayerClickInputTool(gridPropertyDetails, itemDetails, playerDirection);
                     break;
@@ -322,7 +323,12 @@ public class Player : SingletonMonobehaviour<Player>
                     CollectInPlayerDirection(gridPropertyDetails, itemDetails, playerDirection);
                 }
                 break;
-
+            case ItemType.Chopping_tool:
+                if (gridCursor.CursorPositionIsValid)
+                {
+                    ChopInPlayerDirection(gridPropertyDetails, itemDetails, playerDirection);
+                }
+                break;
             default:
                 break;
         }
@@ -568,6 +574,27 @@ public class Player : SingletonMonobehaviour<Player>
         //看玩家拿着的物体是不是采集工具，是的话更改动画
         switch (equippedItemDetails.itemType)
         {
+            case ItemType.Chopping_tool:
+
+                if (playerDirection == Vector3Int.right)
+                {
+                    isUsingToolRight = true;
+                }
+                else if (playerDirection == Vector3Int.left)
+                {
+                    isUsingToolLeft = true;
+                }
+                else if (playerDirection == Vector3Int.up)
+                {
+                    isUsingToolUp = true;
+                }
+                else if (playerDirection == Vector3Int.down)
+                {
+                    isUsingToolDown = true;
+                }
+                break;
+
+
             case ItemType.Collecting_tool:
 
                 if (playerDirection == Vector3Int.right)
@@ -601,6 +628,11 @@ public class Player : SingletonMonobehaviour<Player>
         {
             switch (equippedItemDetails.itemType)
             {
+                case ItemType.Chopping_tool:
+                    crop.ProcessToolAction(equippedItemDetails, isUsingToolRight, isUsingToolLeft, isUsingToolDown,
+                        isUsingToolUp);
+                    break;
+
                 case ItemType.Collecting_tool:
                     crop.ProcessToolAction(equippedItemDetails, isPickingRight, isPickingLeft, isPickingDown,
                         isPickingUp);
@@ -609,7 +641,35 @@ public class Player : SingletonMonobehaviour<Player>
         }
     }
 
-    
+    private void ChopInPlayerDirection(GridPropertyDetails gridPropertyDetails, ItemDetails equippedItemDetails,
+        Vector3Int playerDirection)
+    {
+        //触发动画
+        StartCoroutine(ChopInPlayerDirectionRoutine(gridPropertyDetails, equippedItemDetails, playerDirection));
+    }
+
+    private IEnumerator ChopInPlayerDirectionRoutine(GridPropertyDetails gridPropertyDetails,
+        ItemDetails equippedItemDetails, Vector3Int playerDirection)
+    {
+        PlayerInputIsDisabled = true;
+        playerToolUseDisabled = true;
+
+        // 设置动画覆盖控制器
+        toolCharacterAttribute.partVariantType = PartVariantType.axe;
+        characterAttributeCustomisationList.Clear();
+        characterAttributeCustomisationList.Add(toolCharacterAttribute);
+        animationOverrides.ApplyCharacterCustomisationParameters(characterAttributeCustomisationList);
+
+        ProcessCropWithEquippedItemInPlayerDirection(playerDirection, equippedItemDetails, gridPropertyDetails);
+
+        yield return useToolAnimationPause;
+
+        // 使用动画以后
+        yield return afterUseToolAnimationPause;
+
+        PlayerInputIsDisabled = false;
+        playerToolUseDisabled = false;
+    }
 
     #endregion
     #endregion
