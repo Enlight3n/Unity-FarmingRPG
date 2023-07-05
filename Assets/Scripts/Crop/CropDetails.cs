@@ -15,7 +15,7 @@ public class CropDetails
     
     [ItemCodeDescription] public int harvestedTransformItemCode; //收获后转化为的物体ID，不一定会有。如树被砍伐了转化为树桩
     
-    //在收获动画以前，指明作物是否被禁用，因为作物其实被启用了会被直接拾取
+    //在收获动画以前，是否隐藏收获动画调用的精灵
     public bool hideCropBeforeHarvestedAnimation;  
     
     //在收获动画以前，指明作物碰撞体是否被禁用

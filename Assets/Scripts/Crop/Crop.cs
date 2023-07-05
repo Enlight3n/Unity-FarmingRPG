@@ -7,10 +7,13 @@ using UnityEngine;
 public class Crop : MonoBehaviour
 {
     private int harvestActionCount = 0; //标明已在这个作物上收割了几次，比如砍了三次树，但树要五次才能砍倒
+
+    [SerializeField] private SpriteRenderer cropHarvestedSpriteRenderer;
     
     [HideInInspector] public Vector2Int cropGridPosition; //记录这个作物是在哪个网格上
-    
-    public void ProcessToolAction(ItemDetails equippedItemDetails)
+
+    public void ProcessToolAction(ItemDetails equippedItemDetails, bool isToolRight, bool isToolLeft, bool isToolDown,
+        bool isToolUp)
     {
         GridPropertyDetails gridPropertyDetails =
             GridPropertiesManager.Instance.GetGridPropertyDetails(cropGridPosition.x, cropGridPosition.y);
@@ -28,6 +31,18 @@ public class Crop : MonoBehaviour
         if (cropDetails == null)
             return;
 
+        Animator animator = GetComponentInChildren<Animator>();
+        if (animator != null)
+        {
+            if (isToolRight || isToolUp)
+            {
+                animator.SetTrigger("usetoolright");
+            }
+            else if (isToolLeft || isToolDown)
+            {
+                animator.SetTrigger("usetoolleft");
+            }
+        }
 
         // Get required harvest actions for tool
         int requiredHarvestActions = cropDetails.RequiredHarvestActionsForTool(equippedItemDetails.itemCode);
@@ -40,22 +55,70 @@ public class Crop : MonoBehaviour
 
         // Check if required harvest actions made
         if (harvestActionCount >= requiredHarvestActions)
-            HarvestCrop(cropDetails, gridPropertyDetails);
+            HarvestCrop(isToolRight, isToolUp, cropDetails, gridPropertyDetails, animator);
     }
 
-    private void HarvestCrop(CropDetails cropDetails, GridPropertyDetails gridPropertyDetails)
+    private void HarvestCrop(bool isUsingToolRight, bool isUsingToolUp, CropDetails cropDetails,
+        GridPropertyDetails gridPropertyDetails, Animator animator)
     {
+        if (cropDetails.isHarvestedAnimation && animator != null)
+        {
+            // If harvest sprite then add to sprite renderer
+            if (cropDetails.harvestedSprite != null)
+            {
+                if (cropHarvestedSpriteRenderer != null)
+                {
+                    cropHarvestedSpriteRenderer.sprite = cropDetails.harvestedSprite;
+                }
+            }
+
+            if (isUsingToolRight || isUsingToolUp)
+            {
+                animator.SetTrigger("harvestright");
+            }
+            else
+            {
+                animator.SetTrigger("harvestleft");
+            }
+        }
+        
         // Delete crop from grid properties
         gridPropertyDetails.seedItemCode = -1;
         gridPropertyDetails.growthDays = -1;
         gridPropertyDetails.daysSinceLastHarvest = -1;
         gridPropertyDetails.daysSinceWatered = -1;
 
-        GridPropertiesManager.Instance.SetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY, gridPropertyDetails);
+        if (cropDetails.hideCropBeforeHarvestedAnimation)
+        {
+            GetComponentInChildren<SpriteRenderer>().enabled = false;
+        }
+
+        GridPropertiesManager.Instance.SetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY,
+            gridPropertyDetails);
+
+        if (cropDetails.isHarvestedAnimation && animator != null)
+        {
+            StartCoroutine(ProcessHarvestActionsAfterAnimation(cropDetails, gridPropertyDetails, animator));
+        }
+        else
+        {
+
+            HarvestActions(cropDetails, gridPropertyDetails);
+        }
+    }
+
+    private IEnumerator ProcessHarvestActionsAfterAnimation(CropDetails cropDetails,
+        GridPropertyDetails gridPropertyDetails, Animator animator)
+    {
+        while (!animator.GetCurrentAnimatorStateInfo(0).IsName("Harvested"))
+        {
+            yield return null;
+        }
 
         HarvestActions(cropDetails, gridPropertyDetails);
     }
 
+    
     private void HarvestActions(CropDetails cropDetails, GridPropertyDetails gridPropertyDetails)
     {
         SpawnHarvestedItems(cropDetails);

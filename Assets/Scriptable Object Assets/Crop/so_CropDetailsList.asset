@@ -39,7 +39,7 @@ MonoBehaviour:
     harvestActionEffect: 5
     harvestToolItemCode: 1c270000
     requiredHarvestActions: 01000000
-    cropProducedItemCode: 21270000
+    cropProducedItemCode: 17270000
     cropProducedMinQuantity: 01000000
     cropProducedMaxQuantity: 01000000
     daysToRegrow: 0
