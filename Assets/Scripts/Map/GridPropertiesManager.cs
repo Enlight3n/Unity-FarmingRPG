@@ -319,42 +319,46 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         {
             
             CropDetails cropDetails = so_CropDetailsList.GetCropDetails(gridPropertyDetails.seedItemCode);
-            
-            
-            int growthStages = cropDetails.growthDays.Length;
-            int currentGrowthStage = 0;
-            int daysCounter = cropDetails.totalGrowthDays; 
-            //通过作物的生长周期，每个周期的生长天数，总成熟天数，以及当前生长天数，计算出当前的阶段
-            for (int i = growthStages - 1; i >= 0; i--)
+
+            if (cropDetails != null)
             {
-                if (gridPropertyDetails.growthDays >= daysCounter) //growthDays是作物至今的生长天数
+                int growthStages = cropDetails.growthDays.Length;
+                int currentGrowthStage = 0;
+                int daysCounter = cropDetails.totalGrowthDays;
+                //通过作物的生长周期，每个周期的生长天数，总成熟天数，以及当前生长天数，计算出当前的阶段
+                for (int i = growthStages - 1; i >= 0; i--)
                 {
-                    currentGrowthStage = i;
-                    break;
+                    if (gridPropertyDetails.growthDays >= daysCounter) //growthDays是作物至今的生长天数
+                    {
+                        currentGrowthStage = i;
+                        break;
+                    }
+
+                    daysCounter -= cropDetails.growthDays[i]; //daysCounter取值只能为连续的前n个周期数之和
                 }
 
-                daysCounter -= cropDetails.growthDays[i]; //daysCounter取值只能为连续的前n个周期数之和
+
+                GameObject cropPrefab = cropDetails.growthPrefab[currentGrowthStage];
+
+                Sprite growthSprite = cropDetails.growthSprite[currentGrowthStage];
+
+                Vector3 worldPosition =
+                    groundDecoration2.CellToWorld(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY,
+                        0));
+
+                //在网格底边中心生成作物
+                worldPosition = new Vector3(worldPosition.x + Settings.gridCellSize / 2, worldPosition.y,
+                    worldPosition.z);
+
+                GameObject cropInstance = Instantiate(cropPrefab, worldPosition, Quaternion.identity);
+
+                cropInstance.GetComponentInChildren<SpriteRenderer>().sprite = growthSprite;
+
+                cropInstance.transform.SetParent(cropParentTransform);
+
+                cropInstance.GetComponent<Crop>().cropGridPosition =
+                    new Vector2Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY);
             }
-            
-            
-            GameObject cropPrefab = cropDetails.growthPrefab[currentGrowthStage];
-
-            Sprite growthSprite = cropDetails.growthSprite[currentGrowthStage];
-
-            Vector3 worldPosition =
-                groundDecoration2.CellToWorld(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY, 0));
-
-            //在网格底边中心生成作物
-            worldPosition = new Vector3(worldPosition.x + Settings.gridCellSize / 2, worldPosition.y, worldPosition.z);
-
-            GameObject cropInstance = Instantiate(cropPrefab, worldPosition, Quaternion.identity);
-
-            cropInstance.GetComponentInChildren<SpriteRenderer>().sprite = growthSprite;
-            
-            cropInstance.transform.SetParent(cropParentTransform);
-
-            cropInstance.GetComponent<Crop>().cropGridPosition =
-                new Vector2Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY);
         }
     }
     

@@ -264,16 +264,18 @@ public class Player : SingletonMonobehaviour<Player>
 
     private void PlantSeedAtCursor(GridPropertyDetails gridPropertyDetails, ItemDetails itemDetails)
     {
-        //更新gridPropertyDetails
-        gridPropertyDetails.seedItemCode = itemDetails.itemCode;
-        gridPropertyDetails.growthDays = 0;
+        if (GridPropertiesManager.Instance.GetCropDetails(itemDetails.itemCode) != null)
+        {
+            //更新gridPropertyDetails
+            gridPropertyDetails.seedItemCode = itemDetails.itemCode;
+            gridPropertyDetails.growthDays = 0;
 
-        //显示作物
-        GridPropertiesManager.Instance.DisplayPlantedCrop(gridPropertyDetails);
+            //显示作物
+            GridPropertiesManager.Instance.DisplayPlantedCrop(gridPropertyDetails);
 
-        //从物品栏移除
-        EventHandler.CallRemoveSelectedItemFromInventoryEvent();
-
+            //从物品栏移除
+            EventHandler.CallRemoveSelectedItemFromInventoryEvent();
+        }
     }
     #endregion
 
