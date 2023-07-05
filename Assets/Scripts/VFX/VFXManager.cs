@@ -6,7 +6,7 @@ public class VFXManager : SingletonMonobehaviour<VFXManager>
 
     private WaitForSeconds twoSeconds;
     [SerializeField] private GameObject reapingPrefab = null;
-
+    [SerializeField] private GameObject deciduousLeavesFallingPrefab;
 
     protected override void Awake()
     {
@@ -42,7 +42,12 @@ public class VFXManager : SingletonMonobehaviour<VFXManager>
                 reaping.SetActive(true);
                 StartCoroutine(DisableHarvestActionEffect(reaping, twoSeconds));
                 break;
-
+            case HarvestActionEffect.deciduousLeavesFalling:
+                GameObject deciduousLeavesFalling = PoolManager.Instance.ReuseObject(deciduousLeavesFallingPrefab,
+                    effectPosition, Quaternion.identity);
+                deciduousLeavesFalling.SetActive(true);
+                StartCoroutine(DisableHarvestActionEffect(deciduousLeavesFalling, twoSeconds));
+                break;
 
             case HarvestActionEffect.none:
                 break;

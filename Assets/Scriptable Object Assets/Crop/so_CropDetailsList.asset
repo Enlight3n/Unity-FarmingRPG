@@ -43,7 +43,7 @@ MonoBehaviour:
     cropProducedMaxQuantity: 01000000
     daysToRegrow: 0
   - seedItemCode: 10000
-    growthDays: 00000000050000000a0000000f00000014000000
+    growthDays: 0000000001000000020000000300000004000000
     growthPrefab:
     - {fileID: 1954857338666229753, guid: 25558a0e49497ee40ade1b76814df291, type: 3}
     - {fileID: 1954857338666229753, guid: 25558a0e49497ee40ade1b76814df291, type: 3}

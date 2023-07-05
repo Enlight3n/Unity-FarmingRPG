@@ -9,8 +9,12 @@ public class Crop : MonoBehaviour
     private int harvestActionCount = 0; //标明已在这个作物上收割了几次，比如砍了三次树，但树要五次才能砍倒
 
     [SerializeField] private SpriteRenderer cropHarvestedSpriteRenderer;
+
+    [SerializeField] private Transform harvestActionEffectTransform = null;
     
     [HideInInspector] public Vector2Int cropGridPosition; //记录这个作物是在哪个网格上
+    
+    
 
     public void ProcessToolAction(ItemDetails equippedItemDetails, bool isToolRight, bool isToolLeft, bool isToolDown,
         bool isToolUp)
@@ -44,6 +48,12 @@ public class Crop : MonoBehaviour
             }
         }
 
+        if (cropDetails.isHarvestActionEffect)
+        {
+            EventHandler.CallHarvestActionEffectEvent(harvestActionEffectTransform.position,
+                cropDetails.harvestActionEffect);
+        }
+        
         // Get required harvest actions for tool
         int requiredHarvestActions = cropDetails.RequiredHarvestActionsForTool(equippedItemDetails.itemCode);
         if (requiredHarvestActions == -1)
