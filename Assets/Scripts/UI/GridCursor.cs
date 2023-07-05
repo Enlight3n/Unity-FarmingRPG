@@ -87,6 +87,7 @@ public class GridCursor : MonoBehaviour
     {
         mainCamera = Camera.main;
         canvas = GetComponentInParent<Canvas>();
+        Application.targetFrameRate = 60;
     }
 
     //每一帧询问：如果光标启用，则显示
@@ -294,7 +295,7 @@ public class GridCursor : MonoBehaviour
                     if (cropDetails != null)
                     {
                         // 检查是否成熟
-                        if (gridPropertyDetails.growthDays >= cropDetails.totalGrowthDays)
+                        if (gridPropertyDetails.growthDays >= cropDetails.growthDays[cropDetails.growthDays.Length - 1])
                         {
                             // Check if crop can be harvested with tool selected
                             if (cropDetails.CanUseToolToHarvestCrop(itemDetails.itemCode))

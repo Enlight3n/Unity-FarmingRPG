@@ -5,8 +5,7 @@ public class CropDetails
 {
     [ItemCodeDescription] public int seedItemCode; //种子物体的ID
     
-    public int[] growthDays; //每个阶段的生长天数
-    public int totalGrowthDays; // 总生长天数
+    public int[] growthDays; //从头开始，生长到第i个阶段总共所需的生长天数
     public GameObject[] growthPrefab;// 每个生长阶段的预制体
     public Sprite[] growthSprite; // 每个生长阶段的精灵
     public Season[] seasons; // 指明可以生长于哪些季节，用不到

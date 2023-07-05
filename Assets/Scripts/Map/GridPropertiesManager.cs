@@ -324,17 +324,15 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
             {
                 int growthStages = cropDetails.growthDays.Length;
                 int currentGrowthStage = 0;
-                int daysCounter = cropDetails.totalGrowthDays;
+
                 //通过作物的生长周期，每个周期的生长天数，总成熟天数，以及当前生长天数，计算出当前的阶段
                 for (int i = growthStages - 1; i >= 0; i--)
                 {
-                    if (gridPropertyDetails.growthDays >= daysCounter) //growthDays是作物至今的生长天数
+                    if (gridPropertyDetails.growthDays >= cropDetails.growthDays[i]) //growthDays[i]是作物i阶段所需的生长天数
                     {
                         currentGrowthStage = i;
                         break;
                     }
-
-                    daysCounter -= cropDetails.growthDays[i]; //daysCounter取值只能为连续的前n个周期数之和
                 }
 
 

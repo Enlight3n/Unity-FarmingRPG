@@ -7,7 +7,7 @@ AnimationClip:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: TreeFallingLeft
-  serializedVersion: 6
+  serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
   m_UseHighQualityCurve: 1
@@ -91,8 +91,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
-        outSlope: 0
+        inSlope: Infinity
+        outSlope: Infinity
         tangentMode: 103
         weightedMode: 0
         inWeight: 0
@@ -110,8 +110,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 1
-        inSlope: 0
-        outSlope: 0
+        inSlope: Infinity
+        outSlope: Infinity
         tangentMode: 103
         weightedMode: 0
         inWeight: 0
@@ -119,8 +119,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 1.5
         value: 0
-        inSlope: 0
-        outSlope: 0
+        inSlope: Infinity
+        outSlope: Infinity
         tangentMode: 103
         weightedMode: 0
         inWeight: 0
@@ -174,14 +174,14 @@ AnimationClip:
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 647256362
+      path: 0
       attribute: 3305885265
       script: {fileID: 0}
       typeID: 212
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 0
+      path: 647256362
       attribute: 3305885265
       script: {fileID: 0}
       typeID: 212
@@ -222,8 +222,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
-        outSlope: 0
+        inSlope: Infinity
+        outSlope: Infinity
         tangentMode: 103
         weightedMode: 0
         inWeight: 0
@@ -445,8 +445,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 1
-        inSlope: 0
-        outSlope: 0
+        inSlope: Infinity
+        outSlope: Infinity
         tangentMode: 103
         weightedMode: 0
         inWeight: 0
@@ -454,8 +454,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 1.5
         value: 0
-        inSlope: 0
-        outSlope: 0
+        inSlope: Infinity
+        outSlope: Infinity
         tangentMode: 103
         weightedMode: 0
         inWeight: 0
