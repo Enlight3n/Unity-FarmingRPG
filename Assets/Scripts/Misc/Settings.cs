@@ -12,10 +12,15 @@ public static class Settings
     //玩家移动相关的常量
     public const float runningSpeed = 5.333f;
     public const float walkingSpeed = 2.666f * 10f;
+    
     public static float useToolAnimationPause = 0.25f;
     public static float afterUseToolAnimationPause = 0.2f;
+    
     public static float liftToolAnimationPause = 0.4f;
     public static float afterLiftToolAnimationPause = 0.4f;
+
+    public static float pickAnimationPause = 1f;
+    public static float afterPickAnimationPause = 0.2f;
 
     public static Vector2 cursorSize = Vector2.one;
     public const float gridCellSize = 1f;

@@ -20,6 +20,8 @@ public class GridCursor : MonoBehaviour
     [SerializeField] private Sprite greenCursorSprite = null; //绿色图标的图片
     [SerializeField] private Sprite redCursorSprite = null; //红色图标的图片
 
+    [SerializeField] private SO_CropDetailsList so_CropDetailsList;
+
     #region 属性
 
     //光标位置是否有效，有效是绿色，无效是红色
@@ -279,6 +281,39 @@ public class GridCursor : MonoBehaviour
                 {
                     return false;
                 }
+            case ItemType.Collecting_tool:
+
+                //检查物体是否可以被所选的物体收获，检查物体是否成熟
+                
+                // 检查这快地是否有种子
+                if (gridPropertyDetails.seedItemCode != -1)
+                {
+                    // 获取种子的详情
+                    CropDetails cropDetails = so_CropDetailsList.GetCropDetails(gridPropertyDetails.seedItemCode);
+                    
+                    if (cropDetails != null)
+                    {
+                        // 检查是否成熟
+                        if (gridPropertyDetails.growthDays >= cropDetails.totalGrowthDays)
+                        {
+                            // Check if crop can be harvested with tool selected
+                            if (cropDetails.CanUseToolToHarvestCrop(itemDetails.itemCode))
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return false;
             default:
                 return false;
         }

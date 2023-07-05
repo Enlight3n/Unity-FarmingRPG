@@ -8,10 +8,16 @@ using Debug = UnityEngine.Debug;
 
 public class Player : SingletonMonobehaviour<Player>
 {
-    private WaitForSeconds afterUseToolAnimationPause;
+    
     private WaitForSeconds useToolAnimationPause;
+    private WaitForSeconds afterUseToolAnimationPause;
+    
     private WaitForSeconds liftToolAnimationPause;
     private WaitForSeconds afterLiftToolAnimationPause;
+    
+    private WaitForSeconds pickAnimationPause;
+    private WaitForSeconds afterPickAnimationPause;
+    
     private bool playerToolUseDisabled = false;
     
     private AnimationOverrides animationOverrides;
@@ -99,6 +105,8 @@ public class Player : SingletonMonobehaviour<Player>
         useToolAnimationPause = new WaitForSeconds(Settings.useToolAnimationPause);
         liftToolAnimationPause = new WaitForSeconds(Settings.liftToolAnimationPause);
         afterLiftToolAnimationPause = new WaitForSeconds(Settings.afterLiftToolAnimationPause);
+        pickAnimationPause = new WaitForSeconds(Settings.pickAnimationPause);
+        afterPickAnimationPause = new WaitForSeconds(Settings.afterPickAnimationPause);
     }
 
     private void OnDisable()
@@ -201,6 +209,7 @@ public class Player : SingletonMonobehaviour<Player>
                 case ItemType.Watering_tool:
                 case ItemType.Reaping_tool:
                 case ItemType.Hoeing_tool:
+                case ItemType.Collecting_tool:
                     ProcessPlayerClickInputTool(gridPropertyDetails, itemDetails, playerDirection);
                     break;
                 case ItemType.none:
@@ -303,6 +312,12 @@ public class Player : SingletonMonobehaviour<Player>
                 {
                     playerDirection = GetPlayerDirection(cursor.GetWorldPositionForCursor(), GetPlayerCentrePosition());
                     ReapInPlayerDirectionAtCursor(itemDetails, playerDirection);
+                }
+                break;
+            case ItemType.Collecting_tool:
+                if (gridCursor.CursorPositionIsValid)
+                {
+                    CollectInPlayerDirection(gridPropertyDetails, itemDetails, playerDirection);
                 }
                 break;
 
@@ -413,7 +428,7 @@ public class Player : SingletonMonobehaviour<Player>
          突然发现，即使禁用下面的SetGridPropertyDetails方法，程序同样正常运行，
          本来以为会出现，场景切换后未能正常保存浇水网格的GridPropertyDetails的情况
          究其原因，应该是这个gridPropertyDetails是引用类型，在赋值的之后虽然经过反复传递，但还是会直接改变原来字典中的值
-         因此，下面或许这个方法没有执行的必要
+         因此，下面这个方法或许没有执行的必要
          */
         GridPropertiesManager.Instance.SetGridPropertyDetails(gridPropertyDetails.gridX, gridPropertyDetails.gridY,
             gridPropertyDetails);
@@ -519,6 +534,79 @@ public class Player : SingletonMonobehaviour<Player>
             }
         }
     }
+
+    private void CollectInPlayerDirection(GridPropertyDetails gridPropertyDetails, ItemDetails equippedItemDetails,
+        Vector3Int playerDirection)
+    {
+
+        StartCoroutine(CollectInPlayerDirectionRoutine(gridPropertyDetails, equippedItemDetails, playerDirection));
+    }
+
+
+    private IEnumerator CollectInPlayerDirectionRoutine(GridPropertyDetails gridPropertyDetails,
+        ItemDetails equippedItemDetails, Vector3Int playerDirection)
+    {
+        PlayerInputIsDisabled = true;
+        playerToolUseDisabled = true;
+
+        ProcessCropWithEquippedItemInPlayerDirection(playerDirection, equippedItemDetails, gridPropertyDetails);
+
+        yield return pickAnimationPause;
+
+        
+        yield return afterPickAnimationPause;
+
+        PlayerInputIsDisabled = false;
+        playerToolUseDisabled = false;
+    }
+
+    private void ProcessCropWithEquippedItemInPlayerDirection(Vector3Int playerDirection,
+        ItemDetails equippedItemDetails, GridPropertyDetails gridPropertyDetails)
+    {
+        //看玩家拿着的物体是不是采集工具，是的话更改动画
+        switch (equippedItemDetails.itemType)
+        {
+            case ItemType.Collecting_tool:
+
+                if (playerDirection == Vector3Int.right)
+                {
+                    isPickingRight = true;
+                }
+                else if (playerDirection == Vector3Int.left)
+                {
+                    isPickingLeft = true;
+                }
+                else if (playerDirection == Vector3Int.up)
+                {
+                    isPickingUp = true;
+                }
+                else if (playerDirection == Vector3Int.down)
+                {
+                    isPickingDown = true;
+                }
+                break;
+
+            case ItemType.none:
+                break;
+        }
+        
+        //获取这个网格中的作物
+        Crop crop = GridPropertiesManager.Instance.GetCropObjectAtGridLocation(gridPropertyDetails);
+
+        //如果crop脚本不空，且拿着的是采集工具，执行作物的corp脚本处理采集的方法
+        //（包括累计采集次数判断是否采集完成，决定生成果实的数量和位置，重置网格属性，销毁作物，生成果实）
+        if (crop != null)
+        {
+            switch (equippedItemDetails.itemType)
+            {
+                case ItemType.Collecting_tool:
+                    crop.ProcessToolAction(equippedItemDetails);
+                    break;
+            }
+        }
+    }
+
+    
 
     #endregion
     #endregion

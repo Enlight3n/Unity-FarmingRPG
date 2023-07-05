@@ -312,7 +312,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
 
     #region (public)生成作物——根据单个网格的gridPropertyDetails
     
-    //根据网格的gridPropertyDetails生成作物，并给他们添加Crop
+    //根据网格的gridPropertyDetails，计算出作物的阶段，生成作物，并给他们添加Crop脚本组件
     public void DisplayPlantedCrop(GridPropertyDetails gridPropertyDetails)
     {
         if (gridPropertyDetails.seedItemCode > -1)
@@ -723,4 +723,39 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     }
     
     #endregion
+    
+    //根据网格的gridPropertyDetails来获取其上作物具有的Crop脚本组件
+    public Crop GetCropObjectAtGridLocation(GridPropertyDetails gridPropertyDetails)
+    {
+        //获取网格中心的世界坐标
+        Vector3 worldPosition =
+            grid.GetCellCenterWorld(new Vector3Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY, 0));
+        Collider2D[] collider2DArray = Physics2D.OverlapPointAll(worldPosition);
+
+        
+        Crop crop = null;
+
+        for (int i = 0; i < collider2DArray.Length; i++)
+        {
+            //GetComponentInParent逐层向上查找，从自己这一层开始递归
+            crop = collider2DArray[i].gameObject.GetComponentInParent<Crop>();
+            if (crop != null && crop.cropGridPosition ==
+                new Vector2Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY))
+                break;
+            //GetComponentInChildren逐层向下查找，从自己这一层开始递归
+            crop = collider2DArray[i].gameObject.GetComponentInChildren<Crop>();
+            if (crop != null && crop.cropGridPosition ==
+                new Vector2Int(gridPropertyDetails.gridX, gridPropertyDetails.gridY))
+                break;
+            //所以这两个无论注释哪一个都能正常运行，因为crop和BoxCollider2D是属于同一component
+        }
+
+        return crop;
+    }
+    
+    //根据种子ID获取其作物详情
+    public CropDetails GetCropDetails(int seedItemCode)
+    {
+        return so_CropDetailsList.GetCropDetails(seedItemCode);
+    }
 }

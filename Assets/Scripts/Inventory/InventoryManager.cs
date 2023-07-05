@@ -104,6 +104,25 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>
         EventHandler.CallInventoryUpdatedEvent(inventoryLocation, inventoryLists[(int)inventoryLocation]);
     }
 
+    public void AddItem(InventoryLocation inventoryLocation, int itemCode)
+    {
+        List<InventoryItem> inventoryList = inventoryLists[(int)inventoryLocation];
+
+        // Check if inventory already contains the item
+        int itemPosition = FindItemInInventory(inventoryLocation, itemCode);
+
+        if (itemPosition != -1)
+        {
+            AddItemAtPosition(inventoryList, itemCode, itemPosition);
+        }
+        else
+        {
+            AddItemAtPosition(inventoryList, itemCode);
+        }
+
+        //  Send event that inventory has been updated
+        EventHandler.CallInventoryUpdatedEvent(inventoryLocation, inventoryLists[(int)inventoryLocation]);
+    }
 
     //添加新的物品，声明一个新的数据列表元素添加到最后
     private void AddItemAtPosition(List<InventoryItem> inventoryList, int itemCode)
