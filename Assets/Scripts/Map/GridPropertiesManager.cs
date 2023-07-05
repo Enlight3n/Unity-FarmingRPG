@@ -16,6 +16,8 @@ using System.Linq;
 public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManager>,ISaveable
 {
     private Transform cropParentTransform;
+
+    private bool isFirstTimeSceneLoaded = true;
     
     private Grid grid; //暂时未用
     private Tilemap groundDecoration1; //锄地的地面
@@ -152,6 +154,10 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
 
         sceneSave.gridPropertyDetailsDictionary = gridPropertyDictionary;
 
+        sceneSave.boolDictionary = new Dictionary<string, bool>();
+        sceneSave.boolDictionary.Add("isFirstTimeSceneLoaded", isFirstTimeSceneLoaded);
+
+
         GameObjectSave.sceneData.Add(sceneName, sceneSave);
     }
 
@@ -165,6 +171,16 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
             {
                 gridPropertyDictionary = sceneSave.gridPropertyDetailsDictionary;
             }
+
+            if (sceneSave.boolDictionary != null &&
+                sceneSave.boolDictionary.TryGetValue("isFirstTimeSceneLoaded", out bool storedIsFirstTimeSceneLoaded))
+            {
+                isFirstTimeSceneLoaded = storedIsFirstTimeSceneLoaded;
+            }
+
+            // Instantiate any crop prefabs initially present in the scene
+            if (isFirstTimeSceneLoaded)
+                EventHandler.CallInstantiateCropPrefabsEvent();
             
             //遍历这个gridPropertyDictionary，根据其性质，逐一修改单个瓦片
             if (gridPropertyDictionary.Count > 0)
@@ -172,6 +188,11 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
                 ClearDisplayGridPropertyDetails();
                 
                 DisplayGridPropertyDetails();
+            }
+            
+            if (isFirstTimeSceneLoaded == true)
+            {
+                isFirstTimeSceneLoaded = false;
             }
         }
     }
@@ -248,6 +269,9 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
                 this.gridPropertyDictionary = gridPropertyDictionary;
             }
 
+            sceneSave.boolDictionary = new Dictionary<string, bool>();
+            sceneSave.boolDictionary.Add("isFirstTimeSceneLoaded", true);
+            
             //把sceneSave.gridPropertyDetailsDictionary字典，按照场景名保存到GameObjectSave.sceneData中
             GameObjectSave.sceneData.Add(so_GridProperties.sceneName.ToString(), sceneSave);
         }

@@ -140,4 +140,14 @@ public static class EventHandler
     {
         RemoveSelectedItemFromInventoryEvent?.Invoke();
     }
+    
+    //生成作物预制体
+    public static event Action InstantiateCropPrefabsEvent;
+    public static void CallInstantiateCropPrefabsEvent()
+    {
+        if (InstantiateCropPrefabsEvent != null)
+        {
+            InstantiateCropPrefabsEvent();
+        }
+    }
 }

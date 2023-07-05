@@ -11,7 +11,7 @@ public static class Settings
     
     //玩家移动相关的常量
     public const float runningSpeed = 5.333f;
-    public const float walkingSpeed = 2.666f * 10f;
+    public const float walkingSpeed = 2.666f * 3f;
     
     public static float useToolAnimationPause = 0.25f;
     public static float afterUseToolAnimationPause = 0.2f;
