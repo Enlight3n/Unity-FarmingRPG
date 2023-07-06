@@ -8,7 +8,6 @@ public class SaveLoadManager : SingletonMonobehaviour<SaveLoadManager>
 {
     //用iSaveableObjectList来保存所有继承了接口的类，在这里，则是保存了SceneItemsManager类
     public List<ISaveable> iSaveableObjectList;
-    
     public GameSave gameSave;
 
     protected override void Awake()
@@ -25,10 +24,10 @@ public class SaveLoadManager : SingletonMonobehaviour<SaveLoadManager>
         foreach (ISaveable iSaveableObject in iSaveableObjectList)
         {
             iSaveableObject.ISaveableStoreScene(SceneManager.GetActiveScene().name);
-            
+
         }
     }
-    
+
     public void ReStoreCurrentSceneData()
     {
         foreach (ISaveable iSaveableObject in iSaveableObjectList)
@@ -36,12 +35,12 @@ public class SaveLoadManager : SingletonMonobehaviour<SaveLoadManager>
             iSaveableObject.ISaveableRestoreScene(SceneManager.GetActiveScene().name);
         }
     }
-    
+
     #endregion
 
-    
-    
-    
+
+
+
     #region 从文件中加载和保存
 
     public void LoadDataFromFile()
@@ -73,8 +72,7 @@ public class SaveLoadManager : SingletonMonobehaviour<SaveLoadManager>
 
             file.Close();
         }
-
-        UIManager.Instance.DisablePauseMenu();
+        
     }
 
     public void SaveDataToFile()
@@ -94,9 +92,7 @@ public class SaveLoadManager : SingletonMonobehaviour<SaveLoadManager>
         bf.Serialize(file, gameSave);
 
         file.Close();
-
-        UIManager.Instance.DisablePauseMenu();
+        
     }
-    
     #endregion
 }

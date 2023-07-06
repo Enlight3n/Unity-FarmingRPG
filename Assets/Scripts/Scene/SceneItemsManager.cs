@@ -93,7 +93,6 @@ public class SceneItemsManager : SingletonMonobehaviour<SceneItemsManager>, ISav
     {
         parentItem = GameObject.FindGameObjectWithTag(Tags.ItemParentTransform).transform;
     }
-    
     private void OnEnable()
     {
         ISaveableRegister();
