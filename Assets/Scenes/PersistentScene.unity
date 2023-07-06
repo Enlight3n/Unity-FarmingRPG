@@ -1613,6 +1613,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 62801ec2a4112c84fa741b089d0f6a23, type: 2}
   - {fileID: 11400000, guid: 80fdf6ab4b4623348bb39aafe2011a0c, type: 2}
   - {fileID: 11400000, guid: 13e6febc807491e42bc5514313e4c705, type: 2}
+  - {fileID: 11400000, guid: a81c36ba05e93ba40b00567a644d777b, type: 2}
+  - {fileID: 11400000, guid: 4ba4fc1bba7c60b46be0258c38285451, type: 2}
+  - {fileID: 11400000, guid: e55ad3c8ebf431345addc2a76d0b9ff3, type: 2}
+  - {fileID: 11400000, guid: 5fc46ee8774805943ac13ca3dc339cb3, type: 2}
 --- !u!1 &618919054
 GameObject:
   m_ObjectHideFlags: 0
@@ -1814,6 +1818,7 @@ MonoBehaviour:
   deciduousLeavesFallingPrefab: {fileID: 1115032613246738942, guid: 180f8d70980a4c148894848b19dd0c54, type: 3}
   choppingTreeTrunkPrefab: {fileID: 9059012555762608275, guid: e1a3de66c9579b540a93441503fada15, type: 3}
   pineConeFallingPrefab: {fileID: 1115032613246738942, guid: 8898de2a90772f34baafb3ffbfc9220b, type: 3}
+  breakingStonePrefab: {fileID: 8478961368389249318, guid: c1da7f4697d3c9849b2962211d456ded, type: 3}
 --- !u!4 &696229491
 Transform:
   m_ObjectHideFlags: 0
@@ -3337,6 +3342,8 @@ MonoBehaviour:
     prefab: {fileID: 9059012555762608275, guid: e1a3de66c9579b540a93441503fada15, type: 3}
   - poolSize: 5
     prefab: {fileID: 1115032613246738942, guid: 8898de2a90772f34baafb3ffbfc9220b, type: 3}
+  - poolSize: 5
+    prefab: {fileID: 8478961368389249318, guid: c1da7f4697d3c9849b2962211d456ded, type: 3}
 --- !u!4 &1543788792
 Transform:
   m_ObjectHideFlags: 0

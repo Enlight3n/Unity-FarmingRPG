@@ -9,6 +9,7 @@ public class VFXManager : SingletonMonobehaviour<VFXManager>
     [SerializeField] private GameObject deciduousLeavesFallingPrefab;
     [SerializeField] private GameObject choppingTreeTrunkPrefab;
     [SerializeField] private GameObject pineConeFallingPrefab;
+    [SerializeField] private GameObject breakingStonePrefab;
 
     protected override void Awake()
     {
@@ -60,6 +61,11 @@ public class VFXManager : SingletonMonobehaviour<VFXManager>
                 GameObject pineConesFalling = PoolManager.Instance.ReuseObject(pineConeFallingPrefab, effectPosition, Quaternion.identity);
                 pineConesFalling.SetActive(true);
                 StartCoroutine(DisableHarvestActionEffect(pineConesFalling, twoSeconds));
+                break;
+            case HarvestActionEffect.breakingStone:
+                GameObject breakingStone = PoolManager.Instance.ReuseObject(breakingStonePrefab, effectPosition, Quaternion.identity);
+                breakingStone.SetActive(true);
+                StartCoroutine(DisableHarvestActionEffect(breakingStone, twoSeconds));
                 break;
             case HarvestActionEffect.none:
                 break;

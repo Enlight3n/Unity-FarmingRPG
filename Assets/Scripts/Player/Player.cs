@@ -91,6 +91,7 @@ public class Player : SingletonMonobehaviour<Player>
         
         armsCharacterAttribute =
             new CharacterAttribute(CharacterPartAnimator.arms, PartVariantColour.none, PartVariantType.none);
+        
         characterAttributeCustomisationList = new List<CharacterAttribute>();
     }
 
@@ -206,6 +207,7 @@ public class Player : SingletonMonobehaviour<Player>
                         ProcessPlayerClickInputCommodity(itemDetails);
                     }
                     break;
+                case ItemType.Breaking_tool:
                 case ItemType.Watering_tool:
                 case ItemType.Reaping_tool:
                 case ItemType.Hoeing_tool:
@@ -327,6 +329,12 @@ public class Player : SingletonMonobehaviour<Player>
                 if (gridCursor.CursorPositionIsValid)
                 {
                     ChopInPlayerDirection(gridPropertyDetails, itemDetails, playerDirection);
+                }
+                break;
+            case ItemType.Breaking_tool:
+                if (gridCursor.CursorPositionIsValid)
+                {
+                    BreakInPlayerDirection(gridPropertyDetails, itemDetails, playerDirection);
                 }
                 break;
             default:
@@ -574,6 +582,7 @@ public class Player : SingletonMonobehaviour<Player>
         //看玩家拿着的物体是不是采集工具，是的话更改动画
         switch (equippedItemDetails.itemType)
         {
+            case ItemType.Breaking_tool:
             case ItemType.Chopping_tool:
 
                 if (playerDirection == Vector3Int.right)
@@ -628,6 +637,7 @@ public class Player : SingletonMonobehaviour<Player>
         {
             switch (equippedItemDetails.itemType)
             {
+                case ItemType.Breaking_tool:
                 case ItemType.Chopping_tool:
                     crop.ProcessToolAction(equippedItemDetails, isUsingToolRight, isUsingToolLeft, isUsingToolDown,
                         isUsingToolUp);
@@ -670,6 +680,36 @@ public class Player : SingletonMonobehaviour<Player>
         PlayerInputIsDisabled = false;
         playerToolUseDisabled = false;
     }
+
+    private void BreakInPlayerDirection(GridPropertyDetails gridPropertyDetails, ItemDetails equippedItemDetails,
+        Vector3Int playerDirection)
+    {
+
+        StartCoroutine(BreakInPlayerDirectionRoutine(gridPropertyDetails, equippedItemDetails, playerDirection));
+    }
+
+    private IEnumerator BreakInPlayerDirectionRoutine(GridPropertyDetails gridPropertyDetails,
+        ItemDetails equippedItemDetails, Vector3Int playerDirection)
+    {
+        PlayerInputIsDisabled = true;
+        playerToolUseDisabled = true;
+
+
+        toolCharacterAttribute.partVariantType = PartVariantType.pickaxe;
+        characterAttributeCustomisationList.Clear();
+        characterAttributeCustomisationList.Add(toolCharacterAttribute);
+        animationOverrides.ApplyCharacterCustomisationParameters(characterAttributeCustomisationList);
+
+        ProcessCropWithEquippedItemInPlayerDirection(playerDirection, equippedItemDetails, gridPropertyDetails);
+
+        yield return useToolAnimationPause;
+        
+        yield return afterUseToolAnimationPause;
+
+        PlayerInputIsDisabled = false;
+        playerToolUseDisabled = false;
+    }
+
 
     #endregion
     #endregion
