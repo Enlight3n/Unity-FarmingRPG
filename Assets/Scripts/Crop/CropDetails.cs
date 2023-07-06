@@ -34,8 +34,7 @@ public class CropDetails
     public int[] requiredHarvestActions; ////每种工具对应的收获动作的数量，如树需要斧子砍五次才倒
     
     [ItemCodeDescription] public int[] cropProducedItemCode; //收获的物体的ID
-
-    //// 收获的最小和最大作物数量，如果不一致，返回其间的随机数
+    //// 收获的最小和最大作物数量，如果不一致，返回其间的随机数，这里的数组和收获的物体对应
     public int[] cropProducedMinQuantity; 
     public int[] cropProducedMaxQuantity; 
     

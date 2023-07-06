@@ -2,22 +2,32 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UIManager : SingletonMonobehaviour<UIManager>
 {
     //暂停菜单的整体
     [SerializeField] private GameObject pauseMenu = null;
-    
     //暂停菜单的按钮
     [SerializeField] private Button[] menuButtons = null;
     //暂停菜单中，每个按钮打开的界面
     [SerializeField] private GameObject[] menuTabs = null;
     
+    //获取游戏中的物品栏——为了取消打开暂停菜单时还能够拖拽物体
+    [SerializeField] private UIInventoryBar uiInventoryBar = null;
+    
+    //暂停菜单中库存那一栏的PauseMenuInventoryManagement脚本组件
+    [SerializeField] private PauseMenuInventoryManagement pauseMenuInventoryManagement = null;
+    
     //暂停菜单开关的标志
     private bool _pauseMenuOn = false;
     public bool PauseMenuOn { get => _pauseMenuOn; set => _pauseMenuOn = value; }
-    
+
+    [SerializeField] private Button quitButton;
+    [SerializeField] private Scrollbar quitScrollbar;
+    private bool isHoldingQuitButton;
+    private float quitTime = 0f;
     
     protected override void Awake()
     {
@@ -29,8 +39,11 @@ public class UIManager : SingletonMonobehaviour<UIManager>
     private void Update()
     {
         PauseMenu();
+        CheckHoldingStatus();
     }
+
     
+
     //每帧调用，处理暂停菜单的启用与关闭
     private void PauseMenu()
     {
@@ -52,6 +65,12 @@ public class UIManager : SingletonMonobehaviour<UIManager>
     //启用菜单界面
     private void EnablePauseMenu()
     {
+        //摧毁每一个slot记录的拖拽的物体
+        uiInventoryBar.DestroyCurrentlyDraggedItems();
+        
+        //清除 选中红框
+        uiInventoryBar.ClearCurrentlySelectedItems();
+        
         PauseMenuOn = true;
         Player.Instance.PlayerInputIsDisabled = true;
         Time.timeScale = 0;
@@ -67,6 +86,8 @@ public class UIManager : SingletonMonobehaviour<UIManager>
     //关闭菜单界面
     public void DisablePauseMenu()
     {
+        pauseMenuInventoryManagement.DestroyCurrentlyDraggedItems();
+        
         PauseMenuOn = false;
         Player.Instance.PlayerInputIsDisabled = false;
         Time.timeScale = 1;
@@ -132,4 +153,46 @@ public class UIManager : SingletonMonobehaviour<UIManager>
         }
         HighlightButtonForSelectedTab();
     }
+
+    #region 实现长按退出
+    
+    public void PrepareToQuite(BaseEventData baseEventData)
+    {
+        isHoldingQuitButton = true;
+        quitScrollbar.gameObject.SetActive(true);
+    }
+
+    public void IsQuit(BaseEventData baseEventData)
+    {
+        isHoldingQuitButton = false;
+        quitScrollbar.gameObject.SetActive(false);
+        quitTime = 0f;
+    }
+
+    private void CheckHoldingStatus()
+    {
+        if (isHoldingQuitButton)
+        {
+            if (quitTime > 1f)
+            {
+                QuitGame();
+            }
+            else
+            {
+                quitTime += 0.02f;  //这里不能用Time.deltaTime，因为Time.timeScale=0
+            }
+        }
+        SetQuitScrollBar();
+    }
+
+    private void SetQuitScrollBar()
+    {
+        quitScrollbar.size = quitTime;
+    }
+    
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+    #endregion
 }

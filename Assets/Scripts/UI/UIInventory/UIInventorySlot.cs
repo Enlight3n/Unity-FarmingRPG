@@ -15,7 +15,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
     [SerializeField] private UIInventoryBar inventoryBar = null; //获取父物体的脚本
     private Camera mainCamera; //为了使用Camera.main.ScreenToWorldPoint
     private Transform parentItem; //保存场景中，所有可互动物体的父物体Items的transform
-    private GameObject draggedItem; //鼠标拖拽的物体，直接生成出来
+    public GameObject draggedItem; //鼠标拖拽的物体，直接生成出来
     [SerializeField] private GameObject itemPrefab = null; //itemPrefab用来生成在场景中的物体
     
     [SerializeField] private int slotNumber = 0; //给物品栏编号，方便交换位置
@@ -339,7 +339,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
         }
     }
     //清除选中框
-    private void ClearSelectedItem()
+    public void ClearSelectedItem()
     {
         ClearCursors();
          

@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 /// 当我们绘制完该层次的瓦片贴图以后，这个脚本负责将数据写入对应的数据容器中
 /// </summary>
 
-
+#if UNITY_EDITOR
 [ExecuteAlways] //使脚本的实例始终执行，无论是在 Play Mode 还是在编辑时
 public class TilemapGridProperties : MonoBehaviour
 {
@@ -91,5 +91,6 @@ public class TilemapGridProperties : MonoBehaviour
         }
     }
 }
+#endif
 
     

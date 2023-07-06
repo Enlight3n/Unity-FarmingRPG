@@ -90,7 +90,7 @@ MonoBehaviour:
     canBeDropped: 0
     canBeEaten: 0
     canBeCarried: 0
-  - itemCode: 100006
+  - itemCode: 10006
     itemType: 0
     itemDescription: Parsnip Seed
     itemSprite: {fileID: 21300000, guid: 7da78110e28e0f74aaa3ef4a41f4c0ed, type: 3}

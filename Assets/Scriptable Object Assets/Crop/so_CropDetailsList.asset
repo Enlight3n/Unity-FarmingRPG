@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: so_CropDetailsList
   m_EditorClassIdentifier: 
   cropDetails:
-  - seedItemCode: 100006
+  - seedItemCode: 10006
     growthDays: 0000000001000000020000000300000004000000
     growthPrefab:
     - {fileID: 1954857338666229753, guid: 25558a0e49497ee40ade1b76814df291, type: 3}
@@ -38,9 +38,9 @@ MonoBehaviour:
     harvestActionEffect: 5
     harvestToolItemCode: 1c270000
     requiredHarvestActions: 01000000
-    cropProducedItemCode: 17270000
-    cropProducedMinQuantity: 01000000
-    cropProducedMaxQuantity: 01000000
+    cropProducedItemCode: 1727000016270000
+    cropProducedMinQuantity: 0100000001000000
+    cropProducedMaxQuantity: 0200000001000000
     daysToRegrow: 0
   - seedItemCode: 10000
     growthDays: 0000000001000000020000000300000004000000
