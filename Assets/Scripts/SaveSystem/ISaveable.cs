@@ -12,7 +12,25 @@ public interface ISaveable
 
     void ISaveableDeregister();
 
+    
+    
+    
+    #region 存储和恢复
+
     void ISaveableStoreScene(string sceneName);
 
     void ISaveableRestoreScene(string sceneName);
+    
+    #endregion
+    
+    
+    
+    
+    #region 保存和加载
+    
+    GameObjectSave ISaveableSave();
+
+    void ISaveableLoad(GameSave gameSave);
+    
+    #endregion
 }

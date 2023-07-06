@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 
 /// <summary>
@@ -138,6 +139,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
         SaveLoadManager.Instance.iSaveableObjectList.Remove(this);
     }
     
+    
     //禁用脚本时，把脚本从SaveLoadManager中的iSaveableObjectList移除
     public void ISaveableRegister()
     {
@@ -196,6 +198,26 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
             }
         }
     }
+    
+    public void ISaveableLoad(GameSave gameSave)
+    {
+        if (gameSave.gameObjectData.TryGetValue(ISaveableUniqueID, out GameObjectSave gameObjectSave))
+        {
+            GameObjectSave = gameObjectSave;
+
+            // Restore data for current scene
+            ISaveableRestoreScene(SceneManager.GetActiveScene().name);
+        }
+    }
+    
+    public GameObjectSave ISaveableSave()
+    {
+        // Store current scene data
+        ISaveableStoreScene(SceneManager.GetActiveScene().name);
+
+        return GameObjectSave;
+    }
+
     #endregion
     
     

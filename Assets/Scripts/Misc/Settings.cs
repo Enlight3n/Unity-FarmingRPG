@@ -74,7 +74,7 @@ public static class Settings
     public const string CollectingTool = "Basket";
 
     //游戏中一秒在现实中过了多久
-    public const float secondsPerGameSecond = 0.012f;
+    public const float secondsPerGameSecond = 0.00012f;
     
     
     //静态构造函数
