@@ -764,7 +764,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &190297767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2307,6 +2307,7 @@ GameObject:
   - component: {fileID: 1000700286}
   - component: {fileID: 1000700285}
   - component: {fileID: 1000700283}
+  - component: {fileID: 1000700287}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2981,6 +2982,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0064a9783f135b74e8d8f67ca3f32004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1000700287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 736131516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8c65ec2331a6af4ab68d75d2d954a0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gUID: 48093ce0-caf0-481b-926b-9b873782b926
 --- !u!1 &1026859992
 GameObject:
   m_ObjectHideFlags: 0
@@ -18794,7 +18808,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Log
+  m_text: Map
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d015ed14e972175418d51080acbff7c9, type: 2}
   m_sharedMaterial: {fileID: 5596133490223815173, guid: d015ed14e972175418d51080acbff7c9, type: 2}
@@ -23697,7 +23711,7 @@ MonoBehaviour:
     m_NormalColor: {r: 0.5294118, g: 0.46666667, b: 0.3647059, a: 1}
     m_HighlightedColor: {r: 0.84705883, g: 0.85882354, b: 0.5176471, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 0.5294118, g: 0.4666667, b: 0.3647059, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1

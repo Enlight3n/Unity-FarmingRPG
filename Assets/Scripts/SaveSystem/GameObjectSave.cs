@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// GameObjectSave：用来保存物品数据的类。GameObjectSave.sceneData是按照场景名保存场景数据的字典
+/// <para>GameObjectSave：用来保存物品数据的类</para>
+/// <para>GameObjectSave.sceneData是按照场景名保存场景数据的字典，玩家的信息保存于持久化场景</para>
+/// <para>一个Manager如果存在需保存的数据，则需持有一个自己的GameObjectSave实例</para>
+/// <para>虽然看上去一个GameObjectSave实例足以保存全部数据，但实际上任意一个GameObjectSave实例都是不完整的</para>
 /// </summary>
 [System.Serializable]
 public class GameObjectSave
@@ -14,7 +17,6 @@ public class GameObjectSave
    {
       sceneData = new Dictionary<string, SceneSave>();
    }
-
    
    public GameObjectSave(Dictionary<string, SceneSave> sceneData)
    {

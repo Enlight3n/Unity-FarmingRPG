@@ -2,6 +2,9 @@ using UnityEngine;
 
 public static class Settings
 {
+    public const string PersistentScene = "PersistentScene";
+    
+    
     //设置fader相关的量，淡入淡出时间，目标阿尔法值
     public const float fadeInSeconds = 0.25f;
     public const float fadeOutSeconds = 0.35f;
