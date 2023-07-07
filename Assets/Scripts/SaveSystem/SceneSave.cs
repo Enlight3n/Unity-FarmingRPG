@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using Mono.Cecil.Cil;
 
 /// <summary>
-/// SceneSave，场景保存类，用来保存单个场景的全部数据。其中含有的多个列表，用来保存同一场景中不同类型的数据
+/// SceneSave，场景保存类，用来保存单个场景的全部数据。
+/// <para>其中含有的多个列表/字典，用来保存一个场景中不同类型的数据，但在使用实例时，某些字段在某个场景中可能不会用到</para>
 /// </summary>
 [System.Serializable]
 public class SceneSave
@@ -18,5 +19,8 @@ public class SceneSave
     public List<SceneItem> listSceneItem;
 
     public Dictionary<string, GridPropertyDetails> gridPropertyDetailsDictionary;
+
+    public List<InventoryItem>[] listInvItemArray;
+    public Dictionary<string, int[]> intArrayDictionary;
 
 }
