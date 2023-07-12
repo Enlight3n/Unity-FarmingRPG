@@ -5,17 +5,23 @@ using UnityEngine;
 
 public class GameManager : SingletonMonobehaviour<GameManager>
 {
-    public float fps;
-    
     protected override void Awake()
     {
         base.Awake();
-        Screen.SetResolution(1920,1080,FullScreenMode.Windowed,0);
+        SetScreenMode(true);
         //Application.targetFrameRate = 60;
     }
+    
 
-    private void Update()
+    public void SetScreenMode(bool isFullScreen)
     {
-        fps = 1 / Time.unscaledDeltaTime;
+        if (isFullScreen)
+        {
+            Screen.SetResolution(1920,1080,FullScreenMode.ExclusiveFullScreen,0);
+        }
+        else
+        {
+            Screen.SetResolution(1920,1080,FullScreenMode.Windowed,0);
+        }
     }
 }

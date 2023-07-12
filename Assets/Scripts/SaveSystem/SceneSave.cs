@@ -8,6 +8,7 @@ using Mono.Cecil.Cil;
 [System.Serializable]
 public class SceneSave
 {
+    
     public Dictionary<string, bool> boolDictionary;
 
     //保存"currentScene"，"playerDirection"两个键
@@ -20,7 +21,11 @@ public class SceneSave
 
     public Dictionary<string, GridPropertyDetails> gridPropertyDetailsDictionary;
 
+    //保存库存
     public List<InventoryItem>[] listInvItemArray;
     public Dictionary<string, int[]> intArrayDictionary;
+    
+    //保存时间：如 "gameYear", gameYear ; "gameDay", gameDay
+    public Dictionary<string, int> intDictionary;
 
 }
