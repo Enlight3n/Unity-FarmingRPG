@@ -8,11 +8,13 @@ public interface ISaveable
 
     GameObjectSave GameObjectSave{get; set; }
 
+    #region 注册到SaveLoadManager中
+    
     void ISaveableRegister();
 
     void ISaveableDeregister();
 
-    
+    #endregion
     
     
     #region 存储和恢复

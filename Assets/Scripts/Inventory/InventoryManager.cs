@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-
-public class InventoryManager : SingletonMonobehaviour<InventoryManager>,ISaveable
+/// <summary>
+/// InventoryManager用来保存玩家的物品
+/// </summary>
+public class InventoryManager : SingletonMonobehaviour<InventoryManager>, ISaveable
 {
     //待使用的数据容器，需拖拽赋值
     [SerializeReference] private SO_ItemList itemList = null;
@@ -20,7 +22,7 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>,ISaveab
     private int[] selectedInventoryItem;
     
     
-    
+    //保存相关变量
     private string _iSaveableUniqueID;
     public string ISaveableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
     private GameObjectSave _gameObjectSave;
@@ -188,7 +190,7 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>,ISaveab
 
     #region 添加物品的相关函数
 
-    //拾取物品时调用的AddItem函数
+    //拾取物品时调用的AddItem函数：添加物体 + 删除场景中的物体
     public void AddItem(InventoryLocation inventoryLocation, Item item, GameObject gameObjectToDelete)
     {
         AddItem(inventoryLocation, item);
@@ -197,7 +199,7 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>,ISaveab
     }
 
 
-    //把item添加到inventoryLocation（玩家或者箱子）对应的inventoryList里面
+    //传入item，添加到inventoryLocation（玩家或者箱子）对应的inventoryList里面
     public void AddItem(InventoryLocation inventoryLocation, Item item)
     {
         int itemCode = item.ItemCode;
@@ -219,11 +221,11 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>,ISaveab
         EventHandler.CallInventoryUpdatedEvent(inventoryLocation, inventoryLists[(int)inventoryLocation]);
     }
 
+    //传入itemCode，添加到inventoryLocation（玩家或者箱子）对应的inventoryList里面
     public void AddItem(InventoryLocation inventoryLocation, int itemCode)
     {
         List<InventoryItem> inventoryList = inventoryLists[(int)inventoryLocation];
-
-        // Check if inventory already contains the item
+        
         int itemPosition = FindItemInInventory(inventoryLocation, itemCode);
 
         if (itemPosition != -1)
@@ -234,8 +236,7 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>,ISaveab
         {
             AddItemAtPosition(inventoryList, itemCode);
         }
-
-        //  Send event that inventory has been updated
+        
         EventHandler.CallInventoryUpdatedEvent(inventoryLocation, inventoryLists[(int)inventoryLocation]);
     }
 
@@ -409,7 +410,7 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>,ISaveab
     #region 当前选中的物体记录，即selectedInventoryItem相关函数
 
     
-    //设置当前选中的物品的ID保存到selectedInventoryItem
+    //传入物品的ID，保存到selectedInventoryItem
     public void SetSelectedInventoryItem(InventoryLocation inventoryLocation, int itemCode)
     {
         selectedInventoryItem[(int)inventoryLocation] = itemCode;

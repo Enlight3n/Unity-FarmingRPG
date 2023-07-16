@@ -16,9 +16,10 @@ public class VFXManager : SingletonMonobehaviour<VFXManager>
         base.Awake();
 
         twoSeconds = new WaitForSeconds(2f);
-
     }
 
+    
+    
     private void OnDisable()
     {
         EventHandler.HarvestActionEffectEvent -= displayHarvestActionEffect;
@@ -29,6 +30,8 @@ public class VFXManager : SingletonMonobehaviour<VFXManager>
         EventHandler.HarvestActionEffectEvent += displayHarvestActionEffect;
     }
 
+    
+    
     private IEnumerator DisableHarvestActionEffect(GameObject effectGameObject, WaitForSeconds secondsToWait)
     {
         yield return secondsToWait;
@@ -69,13 +72,6 @@ public class VFXManager : SingletonMonobehaviour<VFXManager>
                 break;
             case HarvestActionEffect.none:
                 break;
-            
-            
-
-            default:
-                break;
         }
     }
-
-
 }

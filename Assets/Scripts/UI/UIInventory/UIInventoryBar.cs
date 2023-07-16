@@ -33,7 +33,10 @@ public class UIInventoryBar : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
     }
     
-    
+    private void Update()
+    {
+        SwitchInventoryPosition();
+    }
     
     private void OnEnable()
     {
@@ -44,7 +47,11 @@ public class UIInventoryBar : MonoBehaviour
     {
         EventHandler.InventoryUpdatedEvent -= InventoryUpdated;
     }
+    
 
+    #region 物品栏UI的更新和清除
+    
+    
     //更新物品栏，每次更新物品栏，都会先将物品栏清空再根据inventoryList重新绘制
     private void InventoryUpdated(InventoryLocation inventoryLocation, List<InventoryItem> inventoryList)
     {
@@ -98,13 +105,12 @@ public class UIInventoryBar : MonoBehaviour
         }
     }
 
-    
-    
-    
-    private void Update()
-    {
-        SwitchInventoryPosition();
-    }
+    #endregion
+
+
+
+
+    #region 防止玩家遮挡物品栏，每帧调用，检测玩家在屏幕上的位置
     
     
     private void SwitchInventoryPosition()
@@ -130,7 +136,11 @@ public class UIInventoryBar : MonoBehaviour
             IsInventoryBarPositionBottom = false;
         }
     }
-
+    
+    
+    #endregion 
+    
+    
     #region 设置选中红框
     
     

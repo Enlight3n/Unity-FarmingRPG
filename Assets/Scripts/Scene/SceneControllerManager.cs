@@ -15,7 +15,7 @@ public class SceneControllerManager : SingletonMonobehaviour<SceneControllerMana
     public SceneName startingSceneName;
 
     //只有这个函数是public的，从外部调用也是这个函数，传入欲场景名称和玩家要移动到的新位置即可
-    public void FadeAndLoadScene(string sceneName,Vector3 spawnPosition)
+    public void FadeAndLoadScene(string sceneName, Vector3 spawnPosition)
     {
         if (!isFading)
         {

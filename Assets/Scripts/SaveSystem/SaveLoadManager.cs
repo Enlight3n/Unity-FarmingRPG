@@ -24,7 +24,6 @@ public class SaveLoadManager : SingletonMonobehaviour<SaveLoadManager>
         foreach (ISaveable iSaveableObject in iSaveableObjectList)
         {
             iSaveableObject.ISaveableStoreScene(SceneManager.GetActiveScene().name);
-
         }
     }
 
@@ -55,7 +54,7 @@ public class SaveLoadManager : SingletonMonobehaviour<SaveLoadManager>
 
             gameSave = (GameSave)bf.Deserialize(file);
 
-            // loop through all ISaveable objects and apply save data
+            // 遍历iSaveableObjectList的长度次，根据每一个UniqueID，获取对应的gameSave，执行对应的加载接口函数
             for (int i = iSaveableObjectList.Count - 1; i > -1; i--)
             {
                 if (gameSave.gameObjectData.ContainsKey(iSaveableObjectList[i].ISaveableUniqueID))
@@ -69,17 +68,15 @@ public class SaveLoadManager : SingletonMonobehaviour<SaveLoadManager>
                     Destroy(component.gameObject);
                 }
             }
-
             file.Close();
         }
-        
     }
 
     public void SaveDataToFile()
     {
         gameSave = new GameSave();
 
-        // loop through all ISaveable objects and generate save data
+        // 遍历iSaveableObjectList保存的每一个GameObjectSave，将其制作为键值对，添加到gameSave字典中
         foreach (ISaveable iSaveableObject in iSaveableObjectList)
         {
             gameSave.gameObjectData.Add(iSaveableObject.ISaveableUniqueID, iSaveableObject.ISaveableSave());

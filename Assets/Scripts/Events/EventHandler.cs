@@ -92,7 +92,7 @@ public static class EventHandler
     
     #region 处理场景加载的事件
     
-    //场景切换
+    //场景切换之前，本游戏中，只有场景切换前禁用人物移动的功能用到了这个事件，位于Player脚本中
     public static event Action BeforeSceneUnloadFadeOutEvent;
     public static void CallBeforeSceneUnloadFadeOutEvent()
     {
@@ -111,12 +111,14 @@ public static class EventHandler
         AfterSceneLoadEvent?.Invoke();
     }
     
+    //场景切换之后，本游戏中，只有场景切换后启用人物移动的功能用到了这个事件，位于Player脚本中
     public static event Action AfterSceneLoadFadeInEvent;
     public static void CallAfterSceneLoadFadeInEvent()
     {
         AfterSceneLoadFadeInEvent?.Invoke();
         
     }
+    
     #endregion
     
     

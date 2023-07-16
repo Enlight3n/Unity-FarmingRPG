@@ -1,18 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 使用对象池时，只需调用方法ReuseObject。注意此方法返回的GameObject的SetActive为false
+/// </summary>
 public class PoolManager : SingletonMonobehaviour<PoolManager>
 {
-    //int是预制体的实例ID，队列里存有一定数量的由预制体创造的物体
-    //这个字典是用来保存全部对象池的
+    //这个字典是用来保存全部对象池的，int是预制体的实例ID，队列里存有一定数量的，由同一预制体创造的物体
     private Dictionary<int, Queue<GameObject>> poolDictionary = new Dictionary<int, Queue<GameObject>>();
 
-    //指明创造的对象池物体在场景中父物体
+    //指明创造的对象池物体在场景中的父物体——即此脚本挂载的物体。可序列化后拖拽赋值，也可隐藏后代码赋值。
     [SerializeField] private Transform objectPoolTransform = null;
 
     //start方法根据pool中设定的值，来初始化poolDictionary
     [SerializeField] private Pool[] pool = null;
-    
     
     [System.Serializable]
     public struct Pool
@@ -20,6 +21,8 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
         public int poolSize;
         public GameObject prefab;
     }
+    
+    
     
     //start方法根据pool中设定的值，来初始化poolDictionary
     private void Start()
@@ -31,7 +34,8 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
         }
     }
 
-    //给定预制体和数量，创造对象池
+    
+    //给定预制体和数量，创造单个对象池
     private void CreatePool(GameObject prefab, int poolSize)
     {
         
@@ -108,5 +112,4 @@ public class PoolManager : SingletonMonobehaviour<PoolManager>
         objectToReuse.transform.localScale = prefab.transform.localScale;
 
     }
-
 }

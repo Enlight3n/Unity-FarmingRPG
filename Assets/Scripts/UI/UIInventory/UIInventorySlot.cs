@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEndDragHandler, IPointerEnterHandler,IPointerExitHandler,IPointerClickHandler
 {
 
-    //处理鼠标对UIslot的拖拽
+    //处理鼠标对UISlot的拖拽
     
     [SerializeField] private UIInventoryBar inventoryBar = null; //获取父物体的脚本
     private Camera mainCamera; //为了使用Camera.main.ScreenToWorldPoint
@@ -362,6 +362,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
         
         cursor.SelectedItemType = ItemType.none;
     }
+    
     #endregion
     
     private void RemoveSelectedItemFromInventory()
@@ -374,7 +375,7 @@ public class UIInventorySlot : MonoBehaviour, IBeginDragHandler,IDragHandler,IEn
             InventoryManager.Instance.RemoveItem(InventoryLocation.player, itemCode);
 
             // 看下还没有，没有就清除选中框
-            //如果注释掉这一行的话，虽然种了之后背包里没有了，但人还是拿着种子，而且可以一直种，直到切换了持有物
+            // 如果注释掉这一行的话，虽然种了之后背包里没有了，但人还是拿着种子，而且可以一直种，直到切换了持有物
             if (InventoryManager.Instance.FindItemInInventory(InventoryLocation.player, itemCode) == -1)
             {
                 ClearSelectedItem();
