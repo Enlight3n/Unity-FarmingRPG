@@ -2185,6 +2185,7 @@ GameObject:
   m_Component:
   - component: {fileID: 528521593}
   - component: {fileID: 528521594}
+  - component: {fileID: 528521595}
   m_Layer: 0
   m_Name: CharacterCutsomiser
   m_TagString: Untagged
@@ -2265,6 +2266,25 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4ba4fc1bba7c60b46be0258c38285451, type: 2}
   - {fileID: 11400000, guid: e55ad3c8ebf431345addc2a76d0b9ff3, type: 2}
   - {fileID: 11400000, guid: 5fc46ee8774805943ac13ca3dc339cb3, type: 2}
+--- !u!114 &528521595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 528521592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccb476543f9f44b41a7a442f03859bcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maleFarmerBaseTexture: {fileID: 2800000, guid: c4e8a25a818969f4faa9e0679d36d253, type: 3}
+  femaleFarmerBaseTexture: {fileID: 2800000, guid: c4e8a25a818969f4faa9e0679d36d253, type: 3}
+  shirtsBaseTexture: {fileID: 2800000, guid: bae27de6a19db3443894c2350fec9717, type: 3}
+  farmerBaseCustomised: {fileID: 2800000, guid: 73946c4cd19968e4486ca15a2e699ab6, type: 3}
+  inputShirtStyleNo: 0
+  inputSex: 0
+  inputTrouserColor: {r: 1, g: 0, b: 0.71788883, a: 1}
 --- !u!1 &618919054
 GameObject:
   m_ObjectHideFlags: 0

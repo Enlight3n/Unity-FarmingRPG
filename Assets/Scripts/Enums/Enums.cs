@@ -103,3 +103,11 @@ public enum HarvestActionEffect
     reaping,
     none
 }
+
+public enum Facing
+{
+    none,
+    front,
+    back,
+    right
+}
