@@ -2281,10 +2281,21 @@ MonoBehaviour:
   maleFarmerBaseTexture: {fileID: 2800000, guid: c4e8a25a818969f4faa9e0679d36d253, type: 3}
   femaleFarmerBaseTexture: {fileID: 2800000, guid: c4e8a25a818969f4faa9e0679d36d253, type: 3}
   shirtsBaseTexture: {fileID: 2800000, guid: bae27de6a19db3443894c2350fec9717, type: 3}
+  hairBaseTexture: {fileID: 2800000, guid: 9982bf9edb0201b4583055eb8b80c925, type: 3}
+  hatsBaseTexture: {fileID: 2800000, guid: bfd5930cb171ad448883f9eca56c9e08, type: 3}
+  adornmentsBaseTexture: {fileID: 2800000, guid: 2a21c56faaf4afd479c55eda19270d74, type: 3}
   farmerBaseCustomised: {fileID: 2800000, guid: 73946c4cd19968e4486ca15a2e699ab6, type: 3}
-  inputShirtStyleNo: 0
+  hairCustomised: {fileID: 2800000, guid: 3fdea510f6c395642bec63c0e92feb05, type: 3}
+  hatsCustomised: {fileID: 2800000, guid: 3f98ab3abed1cec40b1c2e61bead43d6, type: 3}
   inputSex: 0
+  inputHairStyleNo: 1
+  inputHairColor: {r: 0.25610256, g: 0, b: 1, a: 1}
+  inputSkinType: 3
+  inputHatStyleNo: 0
+  inputShirtStyleNo: 1
   inputTrouserColor: {r: 1, g: 0, b: 0.71788883, a: 1}
+  inputAdornmentsStyleNo: 0
+  "\u9F20\u6807\u653E\u4E0A\u63D0\u793A": 0
 --- !u!1 &618919054
 GameObject:
   m_ObjectHideFlags: 0
