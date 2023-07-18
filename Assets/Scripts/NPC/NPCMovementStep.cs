@@ -8,3 +8,4 @@ public class NPCMovementStep
     public int second;
     public Vector2Int gridCoordinate;
 }
+

@@ -5201,8 +5201,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1759667914}
-  - component: {fileID: 1759667913}
-  - component: {fileID: 1759667912}
+  - component: {fileID: 1759667917}
+  - component: {fileID: 1759667916}
+  - component: {fileID: 1759667915}
   m_Layer: 0
   m_Name: NPCManager
   m_TagString: Untagged
@@ -5210,39 +5211,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1759667912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1759667911}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bda45fa6f81de064b89b528f194e1110, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startPosition: {x: 25, y: 5}
-  finishPosition: {x: -19, y: 20}
-  tileMapToDisplayPathOn: {fileID: 1869309287}
-  tileToUseToDisplayPath: {fileID: 11400000, guid: 1512b0f5389b26944baae7397d82e56b, type: 2}
-  displayStartAndFinsh: 1
-  displayPath: 0
---- !u!114 &1759667913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1759667911}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0b718fc59624a249817d1524ebf4b4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  observeMovementPenalties: 1
-  pathMovementPenalty: 0
-  defaultMovementPenalty: 5
 --- !u!4 &1759667914
 Transform:
   m_ObjectHideFlags: 0
@@ -5258,6 +5226,51 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1759667915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759667911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3bedf72e2c96cc4f90f9213e2462a1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  npcPath: {fileID: 2026798121}
+  moveNPC: 0
+  finishPosition: {x: 0, y: 0}
+  idleDownAnimationClip: {fileID: 7400000, guid: cb83867c6252b5c4a8e8758697474f88, type: 2}
+  eventAnimationClip: {fileID: 7400000, guid: cb83867c6252b5c4a8e8758697474f88, type: 2}
+--- !u!114 &1759667916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759667911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b41cedea13f2324782768d07d5e43b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  npcArray: []
+--- !u!114 &1759667917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759667911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0b718fc59624a249817d1524ebf4b4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  observeMovementPenalties: 1
+  pathMovementPenalty: 0
+  defaultMovementPenalty: 0
 --- !u!1 &1805031258
 GameObject:
   m_ObjectHideFlags: 0
@@ -6294,6 +6307,59 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 033928476697be941a79d8bb383a763c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &2026798114 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1112546833451377613, guid: 07bfe9414e7c7704ebbe74ec48aacb28, type: 3}
+  m_PrefabInstance: {fileID: 1240963319}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2026798121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026798114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddddab369d47f5248a2fa87d6f1d4f91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2026798122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026798114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 291af1f5a0d575d4f94a651fc544c03b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  npcCurrentScene: 0
+  npcTargetScene: 0
+  npcCurrentGridPosition: {x: 0, y: 0, z: 0}
+  npcTargetGridPosition: {x: 0, y: 0, z: 0}
+  npcTargetWorldPosition: {x: 0, y: 0, z: 0}
+  npcFacingDirectionAtDestination: 0
+  npcNormalSpeed: 2
+  npcMinSpeed: 1
+  npcMaxSpeed: 3
+  npcTargetAnimationClip: {fileID: 0}
+  blankAnimation: {fileID: 7400000, guid: de73329f78eb6d645a9a70faf2bddfce, type: 2}
+  npcActiveInScene: 0
+--- !u!114 &2026798123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026798114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddddab369d47f5248a2fa87d6f1d4f91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2059307566

@@ -28,7 +28,7 @@ public class AStar : MonoBehaviour
     
     /// <summary>
     /// <para>唯一外部调用的函数</para>
-    /// 给定的场景名，创建一个从startGridPosition到endGridPosition的路径，并把移动步骤添加到npcMovementStack
+    /// 给定的场景名，创建一个从startGridPosition到endGridPosition的路径，把移动的网格添加到npcMovementStack
     /// 同时，如果找到了则返回true，否则返回false
     /// </summary>
     public bool BuildPath(SceneName sceneName, Vector2Int startGridPosition, Vector2Int endGridPosition,
@@ -48,7 +48,7 @@ public class AStar : MonoBehaviour
     
     
     /// <summary>
-    /// 从ClosedList中，沿着目标节点，挨个抽出父节点，并将位置赋值给NPC
+    /// 从ClosedList中，沿着目标节点，挨个抽出父节点，并将位置填充到给npcMovementStepStack，注意这个填充只填充了网格位置
     /// </summary>
     /// <param name="sceneName"></param>
     /// <param name="npcMovementStepStack"></param>
@@ -71,7 +71,7 @@ public class AStar : MonoBehaviour
     }
 
     /// <summary>
-    ///  A星寻路算法
+    ///  A星寻路算法，寻找到合适的节点，准备好ClosedList
     /// </summary>
     private bool FindShortestPath()
     {
@@ -155,7 +155,7 @@ public class AStar : MonoBehaviour
     
     
     /// <summary>
-    /// 根据场景名称和网格属性字典填充网格节点
+    /// 根据场景名称和网格属性字典填充整个场景的网格节点
     /// </summary>
     /// <param name="sceneName">场景名称</param> 
     /// <param name="startGridPosition">开始的网格位置，是整数</param> 

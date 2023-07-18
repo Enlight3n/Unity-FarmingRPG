@@ -77,8 +77,8 @@ public static class Settings
     public const string CollectingTool = "Basket";
 
     //游戏中一秒在现实中过了多久
-    public const float secondsPerGameSecond = 0.00012f;
-    
+    public const float secondsPerGameSecond = 0.012f;
+
     //NPC相关
     public const float gridCellDiagonalSize = 1.41f;
     public static float pixelSize = 0.0625f;
