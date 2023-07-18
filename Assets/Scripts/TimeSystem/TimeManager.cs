@@ -12,7 +12,7 @@ public class TimeManager : SingletonMonobehaviour<TimeManager>,ISaveable
     private int gameMinute = 30;
     private int gameSecond = 0;
     private string gameDayOfWeek = "Mon";
-    private bool gameClockPaused = false;
+    public bool gameClockPaused = false;
     private float gameTick = 0f;
 
     

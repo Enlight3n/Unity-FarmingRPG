@@ -360,8 +360,6 @@ public class NPCMovement : MonoBehaviour
 
     private IEnumerator MoveToGridPositionRoutine(Vector3Int gridPosition, TimeSpan npcMovementStepTime, TimeSpan gameTime)
     {
-        Debug.Log(npcMovementStepTime);
-        
         npcIsMoving = true;
 
         SetMoveAnimation(gridPosition);
@@ -375,21 +373,25 @@ public class NPCMovement : MonoBehaviour
             float timeToMove = (float)(npcMovementStepTime.TotalSeconds - gameTime.TotalSeconds);
 
             // Calculate speed
-            float npcCalculatedSpeed = Vector3.Distance(transform.position, npcNextWorldPosition) / timeToMove / Settings.secondsPerGameSecond;
-
-            //// If speed is at least npc min speed and less than npc max speed  then process, otherwise skip and move NPC immediately to position
-            if (npcCalculatedSpeed >= npcMinSpeed && npcCalculatedSpeed <= npcMaxSpeed)
+            float npcCalculatedSpeed = (Vector3.Distance(transform.position, npcNextWorldPosition) / timeToMove) /
+                                       Settings.secondsPerGameSecond;
+            
+            
+            /*----这个地方，源代码有点问题，人物速度过快会跳过移动，然后恶性循环速度又过小，一直跳过，
+             最后导致时间还没到，人已经走完全程了。限制速度到1，3之间即可----*/
+            npcCalculatedSpeed = Mathf.Clamp(npcCalculatedSpeed, npcMinSpeed, npcMaxSpeed);
+            
+            while (Vector3.Distance(transform.position, npcNextWorldPosition) > Settings.pixelSize)
             {
-                while (Vector3.Distance(transform.position, npcNextWorldPosition) > Settings.pixelSize)
-                {
-                    Vector3 unitVector = Vector3.Normalize(npcNextWorldPosition - transform.position);
-                    Vector2 move = new Vector2(unitVector.x * npcCalculatedSpeed * Time.fixedDeltaTime, unitVector.y * npcCalculatedSpeed * Time.fixedDeltaTime);
+                Vector3 unitVector = Vector3.Normalize(npcNextWorldPosition - transform.position);
+                Vector2 move = new Vector2(unitVector.x * npcCalculatedSpeed * Time.fixedDeltaTime,
+                    unitVector.y * npcCalculatedSpeed * Time.fixedDeltaTime);
 
-                    rigidBody2D.MovePosition(rigidBody2D.position + move);
+                rigidBody2D.MovePosition(rigidBody2D.position + move);
 
-                    yield return waitForFixedUpdate;
-                }
+                yield return waitForFixedUpdate;
             }
+            
         }
 
         rigidBody2D.position = npcNextWorldPosition;
@@ -398,6 +400,32 @@ public class NPCMovement : MonoBehaviour
         npcIsMoving = false;
     }
     
+    //保存时调用，取消npc的移动
+    public void CancelNPCMovement()
+    {
+        npcPath.ClearPath();
+        npcNextGridPosition = Vector3Int.zero;
+        npcNextWorldPosition = Vector3.zero;
+        npcIsMoving = false;
+
+        if (moveToGridPositionRoutine != null)
+        {
+            StopCoroutine(moveToGridPositionRoutine);
+        }
+
+        // Reset move animation
+        ResetMoveAnimation();
+
+        // Clear event animation
+        ClearNPCEventAnimation();
+        npcTargetAnimationClip = null;
+
+        // Reset idle animation
+        ResetIdleAnimation();
+
+        // Set idle animation
+        SetIdleAnimation();
+    }
     #endregion
 
     #region 设置npc相关动画

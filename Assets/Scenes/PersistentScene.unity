@@ -3830,6 +3830,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1750240010}
     m_Modifications:
+    - target: {fileID: -1264505002428231544, guid: 07bfe9414e7c7704ebbe74ec48aacb28, type: 3}
+      propertyPath: so_NPCScheduleEventList
+      value: 
+      objectReference: {fileID: 11400000, guid: 091240c0bce417f48b32d98598091eac, type: 2}
     - target: {fileID: 822025006144921817, guid: 07bfe9414e7c7704ebbe74ec48aacb28, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
       value: 0.5
@@ -3902,6 +3906,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3809088202848983439, guid: 07bfe9414e7c7704ebbe74ec48aacb28, type: 3}
+      propertyPath: blankAnimation
+      value: 
+      objectReference: {fileID: 7400000, guid: de73329f78eb6d645a9a70faf2bddfce, type: 2}
     - target: {fileID: 6383086115898065748, guid: 07bfe9414e7c7704ebbe74ec48aacb28, type: 3}
       propertyPath: m_Size.y
       value: 2
@@ -5238,7 +5246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3bedf72e2c96cc4f90f9213e2462a1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  npcPath: {fileID: 2026798121}
+  npcPath: {fileID: 2026798131}
   moveNPC: 0
   sceneName: 1
   finishPosition: {x: -2, y: -1}
@@ -5420,6 +5428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fd634eb0723b64419e214713e534de4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentWeather: 0
 --- !u!4 &1826493392
 Transform:
   m_ObjectHideFlags: 0
@@ -6311,54 +6320,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 033928476697be941a79d8bb383a763c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &2026798114 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1112546833451377613, guid: 07bfe9414e7c7704ebbe74ec48aacb28, type: 3}
+--- !u!114 &2026798131 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -1667391836437815556, guid: 07bfe9414e7c7704ebbe74ec48aacb28, type: 3}
   m_PrefabInstance: {fileID: 1240963319}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2026798121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2026798114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddddab369d47f5248a2fa87d6f1d4f91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2026798122
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2026798114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 291af1f5a0d575d4f94a651fc544c03b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  npcCurrentScene: 0
-  npcTargetScene: 0
-  npcCurrentGridPosition: {x: 0, y: 0, z: 0}
-  npcTargetGridPosition: {x: 0, y: 0, z: 0}
-  npcTargetWorldPosition: {x: 0, y: 0, z: 0}
-  npcFacingDirectionAtDestination: 0
-  npcNormalSpeed: 2
-  npcMinSpeed: 1
-  npcMaxSpeed: 3
-  npcTargetAnimationClip: {fileID: 0}
-  blankAnimation: {fileID: 7400000, guid: de73329f78eb6d645a9a70faf2bddfce, type: 2}
-  npcActiveInScene: 0
---- !u!114 &2026798123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2026798114}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ddddab369d47f5248a2fa87d6f1d4f91, type: 3}

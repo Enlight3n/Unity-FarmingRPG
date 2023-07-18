@@ -74,6 +74,7 @@ public class UIManager : SingletonMonobehaviour<UIManager>
         PauseMenuOn = true;
         Player.Instance.PlayerInputIsDisabled = true;
         Time.timeScale = 0;
+        TimeManager.Instance.gameClockPaused = true;
         pauseMenu.SetActive(true);
 
         //在暂停的时候调用gc，收回内存，玩家不会注意到卡顿
@@ -91,6 +92,7 @@ public class UIManager : SingletonMonobehaviour<UIManager>
         PauseMenuOn = false;
         Player.Instance.PlayerInputIsDisabled = false;
         Time.timeScale = 1;
+        TimeManager.Instance.gameClockPaused = false;
         pauseMenu.SetActive(false);
     }
 
