@@ -126,7 +126,7 @@ public class NPC : MonoBehaviour, ISaveable
 
                 // Clear any current NPC movement
                 npcMovement.CancelNPCMovement();
-
+                
             }
 
         }

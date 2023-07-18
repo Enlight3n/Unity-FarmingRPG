@@ -41,6 +41,8 @@ public class CropDetails
     //收获以后下次收获还需几天，-1则表明是一次性作物
     public int daysToRegrow;
 
+    public SoundName harvestSound;
+
 
     /// <summary>
     /// 若工具ID可以用来收获这个作物则返回true

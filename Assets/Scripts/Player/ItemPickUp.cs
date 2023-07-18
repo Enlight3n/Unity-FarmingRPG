@@ -13,6 +13,8 @@ public class ItemPickUp : MonoBehaviour
          if (itemDetails.canBePickedUp == true)
          {
             InventoryManager.Instance.AddItem(InventoryLocation.player, item, collision.gameObject);
+            
+            AudioManager.Instance.PlaySound(SoundName.effectPickupSound);
          }
       }
    }

@@ -42,6 +42,7 @@ MonoBehaviour:
     cropProducedMinQuantity: 0100000001000000
     cropProducedMaxQuantity: 0200000001000000
     daysToRegrow: 0
+    harvestSound: 130
   - seedItemCode: 10000
     growthDays: 0000000001000000020000000300000004000000
     growthPrefab:
@@ -71,6 +72,7 @@ MonoBehaviour:
     cropProducedMinQuantity: 0200000001000000
     cropProducedMaxQuantity: 0500000002000000
     daysToRegrow: 0
+    harvestSound: 110
   - seedItemCode: 10010
     growthDays: 00000000
     growthPrefab:
@@ -92,6 +94,7 @@ MonoBehaviour:
     cropProducedMinQuantity: 02000000
     cropProducedMaxQuantity: 03000000
     daysToRegrow: 0
+    harvestSound: 150
   - seedItemCode: 10009
     growthDays: 0000000001000000020000000300000004000000
     growthPrefab:
@@ -121,6 +124,7 @@ MonoBehaviour:
     cropProducedMinQuantity: 0300000001000000
     cropProducedMaxQuantity: 0600000002000000
     daysToRegrow: 0
+    harvestSound: 110
   - seedItemCode: 10011
     growthDays: 00000000
     growthPrefab:
@@ -142,6 +146,7 @@ MonoBehaviour:
     cropProducedMinQuantity: 02000000
     cropProducedMaxQuantity: 03000000
     daysToRegrow: 0
+    harvestSound: 150
   - seedItemCode: 10014
     growthDays: 00000000
     growthPrefab:
@@ -163,6 +168,7 @@ MonoBehaviour:
     cropProducedMinQuantity: 01000000
     cropProducedMaxQuantity: 01000000
     daysToRegrow: 0
+    harvestSound: 140
   - seedItemCode: 10016
     growthDays: 00000000
     growthPrefab:
@@ -184,3 +190,4 @@ MonoBehaviour:
     cropProducedMinQuantity: 02000000
     cropProducedMaxQuantity: 02000000
     daysToRegrow: 0
+    harvestSound: 140
