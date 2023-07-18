@@ -5,14 +5,38 @@ using UnityEngine.SceneManagement;
 //[RequireComponent(typeof(AStar))]
 public class NPCManager : SingletonMonobehaviour<NPCManager>
 {
-    [HideInInspector]
-    public NPC[] npcArray;
+    [HideInInspector] public NPC[] npcArray;
+    
+    //获取so_SceneRouteList，将其做成字典
+    [SerializeField] private SO_SceneRouteList so_SceneRouteList = null;
+    private Dictionary<string, SceneRoute> sceneRouteDictionary;
+
 
     private AStar aStar;
 
     protected override void Awake()
     {
         base.Awake();
+        
+        sceneRouteDictionary = new Dictionary<string, SceneRoute>();
+
+        if (so_SceneRouteList.sceneRouteList.Count > 0)
+        {
+            foreach (SceneRoute so_sceneRoute in so_SceneRouteList.sceneRouteList)
+            {
+                // Check for duplicate routes in dictionary
+                if (sceneRouteDictionary.ContainsKey(so_sceneRoute.fromSceneName.ToString() +
+                                                     so_sceneRoute.toSceneName.ToString()))
+                {
+                    Debug.Log(
+                        "** Duplicate Scene Route Key Found ** Check for duplicate routes in the scriptable object scene route list");
+                    continue;
+                }
+
+                // Add route to dictionary
+                sceneRouteDictionary.Add(so_sceneRoute.fromSceneName.ToString() + so_sceneRoute.toSceneName.ToString(), so_sceneRoute);
+            }
+        }
 
         aStar = GetComponent<AStar>();
 
@@ -51,6 +75,22 @@ public class NPCManager : SingletonMonobehaviour<NPCManager>
             {
                 npcMovement.SetNPCInactiveInScene();
             }
+        }
+    }
+    
+    //传入起始场景和目的场景，返回路线
+    public SceneRoute GetSceneRoute(string fromSceneName, string toSceneName)
+    {
+        SceneRoute sceneRoute;
+
+        // Get scene route from dictionary
+        if (sceneRouteDictionary.TryGetValue(fromSceneName + toSceneName, out sceneRoute))
+        {
+            return sceneRoute;
+        }
+        else
+        {
+            return null;
         }
     }
 

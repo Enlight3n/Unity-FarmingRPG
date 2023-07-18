@@ -31,7 +31,7 @@ public class NPCPath : MonoBehaviour
     {
         ClearPath();
 
-        // If schedule event is for the same scene as the current NPC scene
+        // 如果npc无需移动到其他场景
         if (npcScheduleEvent.toSceneName == npcMovement.npcCurrentScene)
         {
             //获取npc当前的网格坐标
@@ -46,23 +46,91 @@ public class NPCPath : MonoBehaviour
                 npcTargetGridPosition, npcMovementStepStack);
 
             //如果栈中元素大于1
-            if (npcMovementStepStack.Count > 1)
-            {
-                //更新npcMovementStepStack的时间，栈顶的时间是当前游戏时间，其他元素的时间是从上一格到这一格所需的时间
-                UpdateTimesOnPath();
-                
-                // 取出开始坐标
-                npcMovementStepStack.Pop(); 
+            
+        }
+        //如果npc需要移动到其他场景
+        else if(npcScheduleEvent.toSceneName != npcMovement.npcCurrentScene)
+        {
+            SceneRoute sceneRoute;
 
-                //将npcScheduleEvent的一部分属性赋值到npcMovement的相应变量里面
-                npcMovement.SetScheduleEventDetails(npcScheduleEvent);
+            //获取场景之间的转移路线
+            sceneRoute = NPCManager.Instance.GetSceneRoute(npcMovement.npcCurrentScene.ToString(),
+                npcScheduleEvent.toSceneName.ToString());
+
+            //路线是否找到？
+            if (sceneRoute != null)
+            {
+                //反序遍历sceneRoute中的scenePathList列表，反序是为了把好几段路径压到栈里
+                //比如从场景1到场景3，要经过场景2，那么就先场景3的ScenePath，再看场景2的，最后场景1
+                for (int i = sceneRoute.scenePathList.Count - 1; i >= 0; i--)
+                {
+                    int toGridX, toGridY, fromGridX, fromGridY;
+
+                    ScenePath scenePath = sceneRoute.scenePathList[i];
+
+                    
+                    /*以下四段判断，是为了给原始的scenePathList更新起点和终点*/
+                    //看目的网格是否越界
+                    if (scenePath.toGridCell.x >= Settings.maxGridWidth ||
+                        scenePath.toGridCell.y >= Settings.maxGridHeight)
+                    {
+                        //如果是则使用npcScheduleEvent设置的
+                        toGridX = npcScheduleEvent.toGridCoordinate.x;
+                        toGridY = npcScheduleEvent.toGridCoordinate.y;
+                    }
+                    else
+                    {
+                        toGridX = scenePath.toGridCell.x;
+                        toGridY = scenePath.toGridCell.y;
+                    }
+
+                    // Check if this is the starting position
+                    if (scenePath.fromGridCell.x >= Settings.maxGridWidth ||
+                        scenePath.fromGridCell.y >= Settings.maxGridHeight)
+                    {
+                        // if so use npc position
+                        fromGridX = npcMovement.npcCurrentGridPosition.x;
+                        fromGridY = npcMovement.npcCurrentGridPosition.y;
+                    }
+                    else
+                    {
+                        // else use scene path from position
+                        fromGridX = scenePath.fromGridCell.x;
+                        fromGridY = scenePath.fromGridCell.y;
+                    }
+
+                    
+                    Vector2Int fromGridPosition = new Vector2Int(fromGridX, fromGridY);
+
+                    Vector2Int toGridPosition = new Vector2Int(toGridX, toGridY);
+
+                    // Build path and add movement steps to movement step stack
+                    NPCManager.Instance.BuildPath(scenePath.sceneName, fromGridPosition, toGridPosition,
+                        npcMovementStepStack);
+                }
             }
+            
+        }
+        
+        if (npcMovementStepStack.Count > 1)
+        {
+            //更新npcMovementStepStack的时间
+            UpdateTimesOnPath();
+                
+            // 取出开始坐标
+            npcMovementStepStack.Pop(); 
+
+            //将npcScheduleEvent的一部分属性赋值到npcMovement的相应变量里面
+            npcMovement.SetScheduleEventDetails(npcScheduleEvent);
         }
     }
+    
+    
+    
+    
 
     /// <summary>
-    /// 更新npcMovementStepStack的时间，栈顶的时间是当前游戏时间，其他元素的时间是从上一格到这一格所需的时间
-    /// Update the path movement steps with expected gametime
+    /// 更新npcMovementStepStack的时间，即到达某一网格的指定时间
     /// </summary>
     public void UpdateTimesOnPath()
     {

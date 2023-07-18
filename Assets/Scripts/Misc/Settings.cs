@@ -88,6 +88,9 @@ public static class Settings
     public static int walkRight;
     public static int eventAnimation;
 
+    public const int maxGridWidth = 999999;
+    public const int maxGridHeight = 999999;
+
     //静态构造函数
     static Settings()
     {
