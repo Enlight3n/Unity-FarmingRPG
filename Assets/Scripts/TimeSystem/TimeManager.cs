@@ -304,6 +304,14 @@ public class TimeManager : SingletonMonobehaviour<TimeManager>,ISaveable
         }
     }
 
+    public TimeSpan GetGameTime()
+    {
+        TimeSpan gameTime = new TimeSpan(gameHour, gameMinute, gameSecond);
+
+        return gameTime;
+    }
+    
+    
     #region 开发者函数
 
     public void TestAdvanceGameMinute()

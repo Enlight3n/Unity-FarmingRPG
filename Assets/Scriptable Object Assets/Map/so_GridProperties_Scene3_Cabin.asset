@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: so_GridProperties_Scene3_Cabin
   m_EditorClassIdentifier: 
   sceneName: 2
-  gridHigh: 18
-  gridWidth: 16
+  gridHeight: 16
+  gridWidth: 18
   originX: -9
   originY: -5
   gridPropertyList:

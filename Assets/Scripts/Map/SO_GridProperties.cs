@@ -8,8 +8,8 @@ public class SO_GridProperties : ScriptableObject
 {
    public SceneName sceneName;
    
-   //设定记录的起点（左下）坐标，以及组成范围矩形的高宽,这个东西并不会用到，仅起到提示的作用
-   public int gridHigh;
+   //设定记录的起点（左下）坐标，以及组成范围矩形的高宽，只在寻路的时候用到
+   public int gridHeight;
    public int gridWidth;
    public int originX;
    public int originY;

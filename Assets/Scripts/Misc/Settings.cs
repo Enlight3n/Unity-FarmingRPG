@@ -79,10 +79,26 @@ public static class Settings
     //游戏中一秒在现实中过了多久
     public const float secondsPerGameSecond = 0.00012f;
     
-    
+    //NPC相关
+    public const float gridCellDiagonalSize = 1.41f;
+    public static float pixelSize = 0.0625f;
+    public static int walkUp;
+    public static int walkDown;
+    public static int walkLeft;
+    public static int walkRight;
+    public static int eventAnimation;
+
     //静态构造函数
     static Settings()
     {
+        //NPC
+        walkUp = Animator.StringToHash("walkUp");
+        walkDown = Animator.StringToHash("walkDown");
+        walkLeft = Animator.StringToHash("walkLeft");
+        walkRight = Animator.StringToHash("walkRight");
+        eventAnimation = Animator.StringToHash("eventAnimation");
+        
+        
         xInput = Animator.StringToHash("xInput");
         yInput = Animator.StringToHash("yInput");
         isWalking = Animator.StringToHash("isWalking");

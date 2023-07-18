@@ -806,4 +806,28 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     {
         return so_CropDetailsList.GetCropDetails(seedItemCode);
     }
+    
+    //传入场景名，获取相应的网格范围（起点，高宽）
+    public bool GetGridDimensions(SceneName sceneName, out Vector2Int gridDimensions, out Vector2Int gridOrigin)
+    {
+        gridDimensions = Vector2Int.zero;
+        gridOrigin = Vector2Int.zero;
+
+        //遍历场景
+        foreach (SO_GridProperties so_GridProperties in so_gridPropertiesArray)
+        {
+            if (so_GridProperties.sceneName == sceneName)
+            {
+                gridDimensions.x = so_GridProperties.gridWidth;
+                gridDimensions.y = so_GridProperties.gridHeight;
+
+                gridOrigin.x = so_GridProperties.originX;
+                gridOrigin.y = so_GridProperties.originY;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
