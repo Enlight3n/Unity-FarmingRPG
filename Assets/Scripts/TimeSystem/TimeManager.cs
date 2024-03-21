@@ -17,14 +17,14 @@ public class TimeManager : SingletonMonobehaviour<TimeManager>,ISaveable
 
     
     private string _iSaveableUniqueID;
-    public string ISaveableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
+    public string ISavableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
     private GameObjectSave _gameObjectSave;
     public GameObjectSave GameObjectSave { get { return _gameObjectSave; } set { _gameObjectSave = value; } }
 
     protected override void Awake()
     {
         base.Awake();
-        ISaveableUniqueID = GetComponent<GenerateGUID>().GUID;
+        ISavableUniqueID = GetComponent<GenerateGUID>().GUID;
         GameObjectSave = new GameObjectSave();
     }
 
@@ -115,7 +115,7 @@ public class TimeManager : SingletonMonobehaviour<TimeManager>,ISaveable
     public void ISaveableLoad(GameSave gameSave)
     {
         // Get saved gameobject from gameSave data
-        if (gameSave.gameObjectData.TryGetValue(ISaveableUniqueID, out GameObjectSave gameObjectSave))
+        if (gameSave.gameObjectData.TryGetValue(ISavableUniqueID, out GameObjectSave gameObjectSave))
         {
             GameObjectSave = gameObjectSave;
 

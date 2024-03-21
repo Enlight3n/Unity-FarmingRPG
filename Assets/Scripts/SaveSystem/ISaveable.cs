@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface ISaveable
 {
-    string ISaveableUniqueID { get; set; }
+    string ISavableUniqueID { get; set; }
 
     GameObjectSave GameObjectSave{get; set; }
 

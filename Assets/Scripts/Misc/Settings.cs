@@ -12,6 +12,11 @@ public static class Settings
     
     public static float playerCentreYOffset = 0.875f;
     
+    
+    
+    
+    
+    
     //玩家移动相关的常量
     public const float runningSpeed = 5.333f;
     public const float walkingSpeed = 2.666f * 3f;
@@ -68,6 +73,23 @@ public static class Settings
     public static int idleRight;
     public static int idleLeft;
 
+    
+    
+    
+    
+    //NPC相关
+    public const float gridCellDiagonalSize = 1.41f;
+    public static float pixelSize = 0.0625f;
+    public static int walkUp;
+    public static int walkDown;
+    public static int walkLeft;
+    public static int walkRight;
+    public static int eventAnimation;
+    
+
+    public const int maxGridWidth = 999999;
+    public const int maxGridHeight = 999999;
+    
     // 用于鼠标悬浮显示UI的工具类型的文本
     public const string HoeingTool = "Hoe";
     public const string ChoppingTool = "Axe";
@@ -78,18 +100,6 @@ public static class Settings
 
     //游戏中一秒在现实中过了多久
     public const float secondsPerGameSecond = 0.012f;
-
-    //NPC相关
-    public const float gridCellDiagonalSize = 1.41f;
-    public static float pixelSize = 0.0625f;
-    public static int walkUp;
-    public static int walkDown;
-    public static int walkLeft;
-    public static int walkRight;
-    public static int eventAnimation;
-
-    public const int maxGridWidth = 999999;
-    public const int maxGridHeight = 999999;
 
     //静态构造函数
     static Settings()

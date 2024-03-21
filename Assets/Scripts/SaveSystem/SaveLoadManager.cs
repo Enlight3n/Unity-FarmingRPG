@@ -57,7 +57,7 @@ public class SaveLoadManager : SingletonMonobehaviour<SaveLoadManager>
             // 遍历iSaveableObjectList的长度次，根据每一个UniqueID，获取对应的gameSave，执行对应的加载接口函数
             for (int i = iSaveableObjectList.Count - 1; i > -1; i--)
             {
-                if (gameSave.gameObjectData.ContainsKey(iSaveableObjectList[i].ISaveableUniqueID))
+                if (gameSave.gameObjectData.ContainsKey(iSaveableObjectList[i].ISavableUniqueID))
                 {
                     iSaveableObjectList[i].ISaveableLoad(gameSave);
                 }
@@ -79,7 +79,7 @@ public class SaveLoadManager : SingletonMonobehaviour<SaveLoadManager>
         // 遍历iSaveableObjectList保存的每一个GameObjectSave，将其制作为键值对，添加到gameSave字典中
         foreach (ISaveable iSaveableObject in iSaveableObjectList)
         {
-            gameSave.gameObjectData.Add(iSaveableObject.ISaveableUniqueID, iSaveableObject.ISaveableSave());
+            gameSave.gameObjectData.Add(iSaveableObject.ISavableUniqueID, iSaveableObject.ISaveableSave());
         }
 
         BinaryFormatter bf = new BinaryFormatter();

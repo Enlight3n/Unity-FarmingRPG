@@ -36,7 +36,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     [SerializeField] private SO_CropDetailsList so_CropDetailsList = null;
     
     private string _iSaveableUniqueID;
-    public string ISaveableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
+    public string ISavableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
     
     
     private GameObjectSave _gameObjectSave;
@@ -46,7 +46,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     protected override void Awake()
     {
         base.Awake();
-        ISaveableUniqueID = GetComponent<GenerateGUID>().GUID;
+        ISavableUniqueID = GetComponent<GenerateGUID>().GUID;
         GameObjectSave = new GameObjectSave();
     }
 
@@ -201,7 +201,7 @@ public class GridPropertiesManager : SingletonMonobehaviour<GridPropertiesManage
     
     public void ISaveableLoad(GameSave gameSave)
     {
-        if (gameSave.gameObjectData.TryGetValue(ISaveableUniqueID, out GameObjectSave gameObjectSave))
+        if (gameSave.gameObjectData.TryGetValue(ISavableUniqueID, out GameObjectSave gameObjectSave))
         {
             GameObjectSave = gameObjectSave;
 

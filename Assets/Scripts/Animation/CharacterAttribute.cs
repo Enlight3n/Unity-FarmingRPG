@@ -1,5 +1,3 @@
-
-
 public struct CharacterAttribute
 {
     public CharacterPartAnimator characterPart; //指明动画适用于何种部位，手或者身体

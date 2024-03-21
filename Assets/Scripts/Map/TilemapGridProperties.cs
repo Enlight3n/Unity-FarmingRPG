@@ -46,6 +46,9 @@ public class TilemapGridProperties : MonoBehaviour
             
             if (gridProperties != null)
             {
+                //EditorUtility.SetDirty 是 Unity 编辑器脚本中的一个方法
+                //用于标记一个对象（通常是场景中的对象或资产）为“脏”的。
+                //当一个对象被标记为“脏”时，Unity 知道该对象在编辑器中已被修改，因此需要在保存项目或重新导入资源时更新它。
                 EditorUtility.SetDirty(gridProperties);
             }
         }
@@ -54,15 +57,16 @@ public class TilemapGridProperties : MonoBehaviour
     //更新
     private void UpdateGridProperties()
     {
-        //
+        //将 Tilemap 的 origin 和 size 压缩到瓦片所存在的边界
         tilemap.CompressBounds();
 
         if (!Application.IsPlaying(gameObject))
         {
             if (gridProperties != null)
             {
-                Vector3Int startCell = tilemap.cellBounds.min;
-                Vector3Int endCell = tilemap.cellBounds.max;
+                var temp = tilemap.cellBounds;
+                Vector3Int startCell = temp.min;
+                Vector3Int endCell = temp.max;
 
                 for (int x = startCell.x; x < endCell.x; x++)
                 {

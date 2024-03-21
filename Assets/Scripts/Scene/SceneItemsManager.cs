@@ -12,7 +12,7 @@ public class SceneItemsManager : SingletonMonobehaviour<SceneItemsManager>, ISav
     
     //用于存储和访问这个类的唯一ID
     private string _iSaveableUniqueID;
-    public string ISaveableUniqueID
+    public string ISavableUniqueID
     {
         get { return _iSaveableUniqueID; }
         set { _iSaveableUniqueID = value; }
@@ -32,7 +32,7 @@ public class SceneItemsManager : SingletonMonobehaviour<SceneItemsManager>, ISav
     {
         base.Awake();
         
-        ISaveableUniqueID = GetComponent<GenerateGUID>().GUID;
+        ISavableUniqueID = GetComponent<GenerateGUID>().GUID;
 
         GameObjectSave = new GameObjectSave();
     }
@@ -174,7 +174,7 @@ public class SceneItemsManager : SingletonMonobehaviour<SceneItemsManager>, ISav
 
     public void ISaveableLoad(GameSave gameSave)
     {
-        if (gameSave.gameObjectData.TryGetValue(ISaveableUniqueID, out GameObjectSave gameObjectSave))
+        if (gameSave.gameObjectData.TryGetValue(ISavableUniqueID, out GameObjectSave gameObjectSave))
         {
             GameObjectSave = gameObjectSave;
 

@@ -72,7 +72,7 @@ public class Player : SingletonMonobehaviour<Player>, ISaveable
     }
     
     private string _iSaveableUniqueID;
-    public string ISaveableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
+    public string ISavableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
 
 
     private GameObjectSave _gameObjectSave;
@@ -99,7 +99,7 @@ public class Player : SingletonMonobehaviour<Player>, ISaveable
         
         
         /*游戏保存相关*/
-        ISaveableUniqueID = GetComponent<GenerateGUID>().GUID;
+        ISavableUniqueID = GetComponent<GenerateGUID>().GUID;
         GameObjectSave = new GameObjectSave();
     }
 
@@ -181,29 +181,23 @@ public class Player : SingletonMonobehaviour<Player>, ISaveable
 
     public GameObjectSave ISaveableSave()
     {
-        // Delete saveScene for game object if it already exists
         GameObjectSave.sceneData.Remove(Settings.PersistentScene);
-
-        // Create saveScene for game object
+        
         SceneSave sceneSave = new SceneSave();
-        // Create Vector3 Dictionary
+
         sceneSave.vector3Dictionary = new Dictionary<string, Vector3Serializable>();
-        //  Create String Dictionary
+
         sceneSave.stringDictionary = new Dictionary<string, string>();
 
         
-        // Add Player position to Vector3 dictionary
         Vector3Serializable vector3Serializable =
             new Vector3Serializable(transform.position.x, transform.position.y, transform.position.z);
         sceneSave.vector3Dictionary.Add("playerPosition", vector3Serializable);
         
-        // Add Current Scene Name to string dictionary
         sceneSave.stringDictionary.Add("currentScene", SceneManager.GetActiveScene().name);
         
-        // Add Player Direction to string dictionary
         sceneSave.stringDictionary.Add("playerDirection", playerDirection.ToString());
-
-        // 把玩家相关的数据都存在PersistentScene里
+        
         GameObjectSave.sceneData.Add(Settings.PersistentScene, sceneSave);
 
         return GameObjectSave;
@@ -212,28 +206,23 @@ public class Player : SingletonMonobehaviour<Player>, ISaveable
 
     public void ISaveableLoad(GameSave gameSave)
     {
-        if (gameSave.gameObjectData.TryGetValue(ISaveableUniqueID, out GameObjectSave gameObjectSave))
+        if (gameSave.gameObjectData.TryGetValue(ISavableUniqueID, out GameObjectSave gameObjectSave))
         {
-            // Get save data dictionary for scene
             if (gameObjectSave.sceneData.TryGetValue(Settings.PersistentScene, out SceneSave sceneSave))
             {
-                // Get player position
                 if (sceneSave.vector3Dictionary != null &&
                     sceneSave.vector3Dictionary.TryGetValue("playerPosition", out Vector3Serializable playerPosition))
                 {
                     transform.position = new Vector3(playerPosition.x, playerPosition.y, playerPosition.z);
                 }
-
-                // Get String dictionary
+                
                 if (sceneSave.stringDictionary != null)
                 {
-                    // Get player scene
                     if (sceneSave.stringDictionary.TryGetValue("currentScene", out string currentScene))
                     {
                         SceneControllerManager.Instance.FadeAndLoadScene(currentScene, transform.position);
                     }
-
-                    // Get player direction
+                    
                     if (sceneSave.stringDictionary.TryGetValue("playerDirection", out string playerDir))
                     {
                         bool playerDirFound = Enum.TryParse<Direction>(playerDir, true, out Direction direction);
@@ -251,13 +240,13 @@ public class Player : SingletonMonobehaviour<Player>, ISaveable
 
     public void ISaveableStoreScene(string sceneName)
     {
-        // Nothing required here since the player is on a persistent scene;
+        
     }
 
 
     public void ISaveableRestoreScene(string sceneName)
     {
-        // Nothing required here since the player is on a persistent scene;
+        
     }
 
 
@@ -266,13 +255,11 @@ public class Player : SingletonMonobehaviour<Player>, ISaveable
         switch (playerDirection)
         {
             case Direction.up:
-                // set idle up trigger
                 EventHandler.CallMovementEvent(0f, 0f, false, false, false, false, ToolEffect.none, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false);
 
                 break;
 
             case Direction.down:
-                // set idle down trigger
                 EventHandler.CallMovementEvent(0f, 0f, false, false, false, false, ToolEffect.none, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false);
                 break;
 
@@ -285,7 +272,6 @@ public class Player : SingletonMonobehaviour<Player>, ISaveable
                 break;
 
             default:
-                // set idle down trigger
                 EventHandler.CallMovementEvent(0f, 0f, false, false, false, false, ToolEffect.none, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false);
 
                 break;
@@ -545,7 +531,6 @@ public class Player : SingletonMonobehaviour<Player>, ISaveable
     {
         AudioManager.Instance.PlaySound(SoundName.effectWateringCan);
         
-        // Trigger animation
         StartCoroutine(WaterGroundAtCursorRoutine(playerDirection, gridPropertyDetails));
     }
 
@@ -613,14 +598,12 @@ public class Player : SingletonMonobehaviour<Player>, ISaveable
     {
         PlayerInputIsDisabled = true;
         playerToolUseDisabled = true;
-
-        // Set tool animation to scythe in override animation
+        
         toolCharacterAttribute.partVariantType = PartVariantType.scythe;
         characterAttributeCustomisationList.Clear();
         characterAttributeCustomisationList.Add(toolCharacterAttribute);
         animationOverrides.ApplyCharacterCustomisationParameters(characterAttributeCustomisationList);
-
-        // Reap in player direction
+        
         UseToolInPlayerDirection(itemDetails, playerDirection);
 
         yield return useToolAnimationPause;

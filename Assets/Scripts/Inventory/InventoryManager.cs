@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+
 /// <summary>
 /// InventoryManager用来保存玩家的物品
 /// </summary>
+/// 
 public class InventoryManager : SingletonMonobehaviour<InventoryManager>, ISaveable
 {
     //待使用的数据容器，需拖拽赋值
@@ -23,10 +24,14 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>, ISavea
     
     
     //保存相关变量
-    private string _iSaveableUniqueID;
-    public string ISaveableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
+    private string _iSavableUniqueID;
+    public string ISavableUniqueID { get ;  set; } 
+    
+    
     private GameObjectSave _gameObjectSave;
-    public GameObjectSave GameObjectSave { get { return _gameObjectSave; } set { _gameObjectSave = value; } }
+    public GameObjectSave GameObjectSave { get ; set ;}
+    
+    
     private UIInventoryBar inventoryBar;
 
     
@@ -48,7 +53,7 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>, ISavea
             selectedInventoryItem[i] = -1;
         }
         
-        ISaveableUniqueID = GetComponent<GenerateGUID>().GUID;
+        ISavableUniqueID = GetComponent<GenerateGUID>().GUID;
         GameObjectSave = new GameObjectSave();
         
     }
@@ -140,7 +145,7 @@ public class InventoryManager : SingletonMonobehaviour<InventoryManager>, ISavea
 
     public void ISaveableLoad(GameSave gameSave)
     {
-        if (gameSave.gameObjectData.TryGetValue(ISaveableUniqueID, out GameObjectSave gameObjectSave))
+        if (gameSave.gameObjectData.TryGetValue(ISavableUniqueID, out GameObjectSave gameObjectSave))
         {
             GameObjectSave = gameObjectSave;
 

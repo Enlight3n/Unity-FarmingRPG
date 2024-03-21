@@ -9,7 +9,7 @@ using UnityEngine;
 public class NPC : MonoBehaviour, ISaveable
 {
     private string _iSaveableUniqueID;
-    public string ISaveableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
+    public string ISavableUniqueID { get { return _iSaveableUniqueID; } set { _iSaveableUniqueID = value; } }
 
     private GameObjectSave _gameObjectSave;
     public GameObjectSave GameObjectSave { get { return _gameObjectSave; } set { _gameObjectSave = value; } }
@@ -28,7 +28,7 @@ public class NPC : MonoBehaviour, ISaveable
 
     private void Awake()
     {
-        ISaveableUniqueID = GetComponent<GenerateGUID>().GUID;
+        ISavableUniqueID = GetComponent<GenerateGUID>().GUID;
         GameObjectSave = new GameObjectSave();
     }
 
@@ -85,7 +85,7 @@ public class NPC : MonoBehaviour, ISaveable
     public void ISaveableLoad(GameSave gameSave)
     {
         // Get game object save
-        if (gameSave.gameObjectData.TryGetValue(ISaveableUniqueID, out GameObjectSave gameObjectSave))
+        if (gameSave.gameObjectData.TryGetValue(ISavableUniqueID, out GameObjectSave gameObjectSave))
         {
             GameObjectSave = gameObjectSave;
 

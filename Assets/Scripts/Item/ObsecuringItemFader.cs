@@ -2,6 +2,9 @@ using System.Collections;
 using UnityEngine;
 
 
+
+
+
 /// <summary>
 /// 这个脚本挂载到需要控制渐隐渐显的物体上
 /// </summary>
@@ -60,7 +63,7 @@ public class ObsecuringItemFader : MonoBehaviour
             
             yield return null;
         }
-
+        
         _spriteRenderer.color = new Color(1f, 1f, 1f, Settings.targetAlpha);
     }
 }

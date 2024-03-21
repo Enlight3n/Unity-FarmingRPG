@@ -44,17 +44,14 @@ public class ApplyCharacterCustomisation : MonoBehaviour
     [Header("选择性别: 0=Male, 1=Female")] [Range(0, 1)] [SerializeField]
     private int inputSex = 0;
     
-    // Select Hair Style
     [Header("选择头发样式")] [Range(0, 2)] [SerializeField]
     private int inputHairStyleNo = 0;
     // 选择头发颜色
     [SerializeField] private Color inputHairColor = Color.black;
     
-    // Select Skin Type
     [Header("选择皮肤类型")] [Range(0, 3)] [SerializeField]
     private int inputSkinType = 0;
     
-    // Select Hat Style
     [Header("选择帽子类型")] [Range(0, 1)] [SerializeField]
     private int inputHatStyleNo = 0;
     
@@ -65,12 +62,11 @@ public class ApplyCharacterCustomisation : MonoBehaviour
     // 选择裤子颜色
     [Header("选择裤子颜色")][SerializeField] private Color inputTrouserColor = Color.blue;
     
-    // Select Adornments Style
     [Header("选择装饰样式")] [Range(0, 2)] [SerializeField]
     private int inputAdornmentsStyleNo = 0;
 
     [Header("注意")]
-    [Tooltip("这里人物肤色似乎更改不了，绿色衬衫也不能覆盖手臂。我利用源码查看，发现也有同样的问题，或许是因为版本")]
+    [Tooltip("这里人物肤色似乎更改不了，绿色衬衫也不能覆盖手臂。我利用git源码查看，发现也有同样的问题，或许是因为版本")]
     public bool 鼠标放上提示;
     
     //指明面向的方向
@@ -202,54 +198,41 @@ public class ApplyCharacterCustomisation : MonoBehaviour
         
         // 根据选择的衬衫样式，设置纹理
         AddShirtToTexture(inputShirtStyleNo);
-
-        // Apply shirt texture to base
+        
         ApplyShirtTextureToBase();
     }
 
     private void ProcessArms()
     {
-        // Get arm pixels to recolor
         Color[] farmerPixelsToRecolour = farmerBaseTexture.GetPixels(0, 0, 288, farmerBaseTexture.height);
-
-        // Populate Arm Color Swap List
+        
         PopulateArmColorSwapList();
-
-        // Change arm colours
+        
         ChangePixelColors(farmerPixelsToRecolour, colorSwapList);
-
-        // Set recoloured pixels
+        
         farmerBaseCustomised.SetPixels(0, 0, 288, farmerBaseTexture.height, farmerPixelsToRecolour);
 
-        // Apply texture changes
         farmerBaseCustomised.Apply();
     }
 
     private void ProcessTrousers()
     {
-        // Get trouser pixels to recolor
         Color[] farmerTrouserPixels = farmerBaseTexture.GetPixels(288, 0, 96, farmerBaseTexture.height);
-
-        // Change trouser colours
+        
         TintPixelColors(farmerTrouserPixels, inputTrouserColor);
-
-        // Set changed trouser pixels
+        
         farmerBaseCustomised.SetPixels(288, 0, 96, farmerBaseTexture.height, farmerTrouserPixels);
-
-        // Apply texture changes
+        
         farmerBaseCustomised.Apply();
 
     }
     
     private void ProcessHair()
     {
-        // Create Selected Hair Texture
         AddHairToTexture(inputHairStyleNo);
-
-        // Get hair pixels to recolor
+        
         Color[] farmerSelectedHairPixels = hairCustomised.GetPixels();
-
-        // Tint hair pixels
+        
         TintPixelColors(farmerSelectedHairPixels, inputHairColor);
 
         hairCustomised.SetPixels(farmerSelectedHairPixels);
@@ -258,60 +241,50 @@ public class ApplyCharacterCustomisation : MonoBehaviour
     
     private void ProcessSkin()
     {
-        // Get skin pixels to recolor
         Color[] farmerPixelsToRecolour = farmerBaseCustomised.GetPixels(0, 0, 288, farmerBaseTexture.height);
-
-        // Populate Skin Color Swap List
+        
         PopulateSkinColorSwapList(inputSkinType);
-
-        // Change skin colours
+        
         ChangePixelColors(farmerPixelsToRecolour, colorSwapList);
-
-        // Set recoloured pixels
+        
         farmerBaseCustomised.SetPixels(0, 0, 288, farmerBaseTexture.height, farmerPixelsToRecolour);
 
-        // Apply texture changes
         farmerBaseCustomised.Apply();
     }
 
     private void ProcessHat()
     {
-        // Create Selected Hat Texture
         AddHatToTexture(inputHatStyleNo);
     }
 
     private void ProcessAdornments()
     {
-        // Initialise body adornments offset array;
         bodyAdornmentsOffsetArray = new Vector2Int[bodyColumns, bodyRows];
-
-        // Populate body adornments offset array
+        
         PopulateBodyAdornmentsOffsetArray();
-
-        // Create Selected Adornments Texture
+        
         AddAdornmentsToTexture(inputAdornmentsStyleNo);
 
-        //Create new adornments base texture
+
         farmerBaseAdornmentsUpdated = new Texture2D(farmerBaseTexture.width, farmerBaseTexture.height);
         farmerBaseAdornmentsUpdated.filterMode = FilterMode.Point;
-
-        // Set adornments base texture to transparent
+        
         SetTextureToTransparent(farmerBaseAdornmentsUpdated);
         ApplyAdornmentsTextureToBase();
     }
 
     private void MergeCustomisations()
     {
-        // Farmer Shirt Pixels
+
         Color[] farmerShirtPixels =
             farmerBaseShirtsUpdated.GetPixels(0, 0, bodyColumns * farmerSpriteWidth, farmerBaseTexture.height);
-        // Farmer Trouser Pixels
+
         Color[] farmerTrouserPixelsSelection = farmerBaseCustomised.GetPixels(288, 0, 96, farmerBaseTexture.height);
 
         Color[] farmerAdornmentsPixels =
             farmerBaseAdornmentsUpdated.GetPixels(0, 0, bodyColumns * farmerSpriteWidth, farmerBaseTexture.height);
         
-        // Farmer Body Pixels
+
         Color[] farmerBodyPixels =
             farmerBaseCustomised.GetPixels(0, 0, bodyColumns * farmerSpriteWidth, farmerBaseTexture.height);
 
@@ -319,11 +292,11 @@ public class ApplyCharacterCustomisation : MonoBehaviour
         MergeColourArray(farmerBodyPixels, farmerShirtPixels);
         MergeColourArray(farmerBodyPixels, farmerAdornmentsPixels);
 
-        // Paste merged  pixels
+
         farmerBaseCustomised.SetPixels(0, 0, bodyColumns * farmerSpriteWidth, farmerBaseTexture.height,
             farmerBodyPixels);
 
-        // Apply texture changes
+
         farmerBaseCustomised.Apply();
     }
 
@@ -336,29 +309,29 @@ public class ApplyCharacterCustomisation : MonoBehaviour
     
     private void AddShirtToTexture(int shirtStyleNo)
     {
-        // Create shirt texture
+
         selectedShirt = new Texture2D(shirtTextureWidth, shirtTextureHeight);
         selectedShirt.filterMode = FilterMode.Point;
 
-        // Calculate coordinates for shirt pixels
+
         int y = (shirtStyleNo / shirtStylesInSpriteWidth) * shirtTextureHeight;
         int x = (shirtStyleNo % shirtStylesInSpriteWidth) * shirtTextureWidth;
 
-        // Get shirts pixels
+
         Color[] shirtPixels = shirtsBaseTexture.GetPixels(x, y, shirtTextureWidth, shirtTextureHeight);
 
-        // Apply selected shirt pixels to texture
+
         selectedShirt.SetPixels(shirtPixels);
         selectedShirt.Apply();
     }
 
     private void ApplyShirtTextureToBase()
     {
-        // Create new shirt base texture
+
         farmerBaseShirtsUpdated = new Texture2D(farmerBaseTexture.width, farmerBaseTexture.height);
         farmerBaseShirtsUpdated.filterMode = FilterMode.Point;
 
-        // Set shirt base texture to transparent
+
         SetTextureToTransparent(farmerBaseShirtsUpdated);
 
         Color[] frontShirtPixels;
@@ -369,7 +342,7 @@ public class ApplyCharacterCustomisation : MonoBehaviour
         backShirtPixels = selectedShirt.GetPixels(0, shirtSpriteHeight * 0, shirtSpriteWidth, shirtSpriteHeight);
         rightShirtPixels = selectedShirt.GetPixels(0, shirtSpriteHeight * 2, shirtSpriteWidth, shirtSpriteHeight);
 
-        // Loop through base texture and apply shirt pixels
+
         for (int x = 0; x < bodyColumns; x++)
         {
             for (int y = 0; y < bodyRows; y++)
@@ -386,24 +359,24 @@ public class ApplyCharacterCustomisation : MonoBehaviour
                     pixelY += bodyShirtOffsetArray[x, y].y;
                 }
 
-                // Switch on facing direction
+
                 switch (bodyFacingArray[x, y])
                 {
                     case Facing.none:
                         break;
 
                     case Facing.front:
-                        // Populate front shirt pixels
+
                         farmerBaseShirtsUpdated.SetPixels(pixelX, pixelY, shirtSpriteWidth, shirtSpriteHeight, frontShirtPixels);
                         break;
 
                     case Facing.back:
-                        // Populate back shirt pixels
+
                         farmerBaseShirtsUpdated.SetPixels(pixelX, pixelY, shirtSpriteWidth, shirtSpriteHeight, backShirtPixels);
                         break;
 
                     case Facing.right:
-                        // Populate right shirt pixels
+
                         farmerBaseShirtsUpdated.SetPixels(pixelX, pixelY, shirtSpriteWidth, shirtSpriteHeight, rightShirtPixels);
                         break;
 
@@ -413,13 +386,13 @@ public class ApplyCharacterCustomisation : MonoBehaviour
             }
         }
 
-        // Apply shirt texture pixels
+
         farmerBaseShirtsUpdated.Apply();
     }
     
     private void SetTextureToTransparent(Texture2D texture2D)
     {
-        // Fill texture with transparency
+
         Color[] fill = new Color[texture2D.height * texture2D.width];
         for (int i = 0; i < fill.Length; i++)
         {
@@ -737,10 +710,8 @@ public class ApplyCharacterCustomisation : MonoBehaviour
     
     private void PopulateArmColorSwapList()
     {
-        // Clear color swap list
         colorSwapList.Clear();
-
-        // Arm replacement colors
+        
         colorSwapList.Add(new colorSwap(armTargetColor1, selectedShirt.GetPixel(0, 7)));
         colorSwapList.Add(new colorSwap(armTargetColor2, selectedShirt.GetPixel(0, 6)));
         colorSwapList.Add(new colorSwap(armTargetColor3, selectedShirt.GetPixel(0, 5)));
@@ -750,7 +721,6 @@ public class ApplyCharacterCustomisation : MonoBehaviour
     {
         for (int i = 0; i < baseArray.Length; i++)
         {
-            // Loop through color swap list
             if (colorSwapList.Count > 0)
             {
                 for (int j = 0; j < colorSwapList.Count; j++)
@@ -784,7 +754,6 @@ public class ApplyCharacterCustomisation : MonoBehaviour
 
     private void TintPixelColors(Color[] basePixelArray, Color tintColor)
     {
-        // Loop through pixels to tint
         for (int i = 0; i < basePixelArray.Length; i++)
         {
             basePixelArray[i].r = basePixelArray[i].r * tintColor.r;
@@ -802,14 +771,11 @@ public class ApplyCharacterCustomisation : MonoBehaviour
 
     private void AddHairToTexture(int hairStyleNo)
     {
-        // Calculate coordinates for hair pixels
         int y = (hairStyleNo / hairStylesInSpriteWidth) * hairTextureHeight;
         int x = (hairStyleNo % hairStylesInSpriteWidth) * hairTextureWidth;
-
-        // Get hair pixels
+        
         Color[] hairPixels = hairBaseTexture.GetPixels(x, y, hairTextureWidth, hairTextureHeight);
-
-        // Apply selected hair pixels to texture
+        
         hairCustomised.SetPixels(hairPixels);
         hairCustomised.Apply();
     }
@@ -823,11 +789,8 @@ public class ApplyCharacterCustomisation : MonoBehaviour
 
     private void PopulateSkinColorSwapList(int skinType)
     {
-        // Clear color swap list
         colorSwapList.Clear();
-
-        // Skin replacement colors
-        // Switch on skin type
+        
         switch (skinType)
         {
             case 0:
@@ -876,14 +839,11 @@ public class ApplyCharacterCustomisation : MonoBehaviour
 
     private void AddHatToTexture(int hatStyleNo)
     {
-        // Calculate coordinates for hat pixels
         int y = (hatStyleNo / hatStylesInSpriteWidth) * hatTextureHeight;
         int x = (hatStyleNo % hatStylesInSpriteWidth) * hatTextureWidth;
 
-        // Get hat pixels
         Color[] hatPixels = hatsBaseTexture.GetPixels(x, y, hatTextureWidth, hatTextureHeight);
-
-        // Apply selected hat pixels to texture
+        
         hatsCustomised.SetPixels(hatPixels);
         hatsCustomised.Apply();
     }
@@ -1047,18 +1007,14 @@ public class ApplyCharacterCustomisation : MonoBehaviour
     
     private void AddAdornmentsToTexture(int adornmentsStyleNo)
     {
-        // Create adornment texture
         selectedAdornment = new Texture2D(adornmentsTextureWidth, adornmentsTextureHeight);
         selectedAdornment.filterMode = FilterMode.Point;
-
-        // Calculate coordinates for adornments pixels
+        
         int y = (adornmentsStyleNo / adornmentsStylesInSpriteWidth) * adornmentsTextureHeight;
         int x = (adornmentsStyleNo % adornmentsStylesInSpriteWidth) * adornmentsTextureWidth;
-
-        // Get adornments pixels
+        
         Color[] adornmentsPixels = adornmentsBaseTexture.GetPixels(x, y, adornmentsTextureWidth, adornmentsTextureHeight);
-
-        // Apply selected adornments pixels to texture
+        
         selectedAdornment.SetPixels(adornmentsPixels);
         selectedAdornment.Apply();
     }
@@ -1073,9 +1029,7 @@ public class ApplyCharacterCustomisation : MonoBehaviour
 
         rightAdornmentsPixels = selectedAdornment.GetPixels(0, adornmentsSpriteHeight * 0, adornmentsSpriteWidth,
             adornmentsSpriteHeight);
-
-        // Loop through base texture and apply adornments pixels
-
+        
         for (int x = 0; x < bodyColumns; x++)
         {
             for (int y = 0; y < bodyRows; y++)
@@ -1088,21 +1042,18 @@ public class ApplyCharacterCustomisation : MonoBehaviour
                     pixelX += bodyAdornmentsOffsetArray[x, y].x;
                     pixelY += bodyAdornmentsOffsetArray[x, y].y;
                 }
-
-                // Switch on facing direction
+                
                 switch (bodyFacingArray[x, y])
                 {
                     case Facing.none:
                         break;
 
                     case Facing.front:
-                        // Populate front adornments pixels
                         farmerBaseAdornmentsUpdated.SetPixels(pixelX, pixelY, adornmentsSpriteWidth,
                             adornmentsSpriteHeight, frontAdornmentsPixels);
                         break;
 
                     case Facing.right:
-                        // Populate right adornments pixels
                         farmerBaseAdornmentsUpdated.SetPixels(pixelX, pixelY, adornmentsSpriteWidth,
                             adornmentsSpriteHeight, rightAdornmentsPixels);
                         break;
@@ -1112,8 +1063,7 @@ public class ApplyCharacterCustomisation : MonoBehaviour
                 }
             }
         }
-
-        // Apply adornments texture pixels
+        
         farmerBaseAdornmentsUpdated.Apply();
     }
 
@@ -1131,15 +1081,15 @@ public class ApplyCharacterCustomisation : MonoBehaviour
         {
             if (mergeArray[i].a > 0)
             {
-                //Merge array has color
+                
                 if (mergeArray[i].a >= 1)
                 {
-                    // Fully replace
+                    
                     baseArray[i] = mergeArray[i];
                 }
                 else
                 {
-                    //Interpolate colors
+                    
                     float alpha = mergeArray[i].a;
 
                     baseArray[i].r += (mergeArray[i].r - baseArray[i].r) * alpha;
